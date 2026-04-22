@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Away Game Gas Calculator | VegasInsider</title>
+    <style>
+        :root {
+            --vi-gold: #ffcc00;
+            --vi-black: #1a1a1a;
+            --vi-dark-grey: #2d2d2d;
+            --vi-white: #ffffff;
+            --vi-green: #00c853;
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #0d0d0d;
+            color: var(--vi-white);
+            display: flex;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .calculator-card {
+            background-color: var(--vi-black);
+            border: 1px solid var(--vi-dark-grey);
+            border-radius: 12px;
+            width: 100%;
+            max-width: 550px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--vi-gold);
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            text-transform: uppercase;
+            font-style: italic;
+            letter-spacing: 1px;
+        }
+
+        .header h1 span { color: var(--vi-gold); }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .input-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 11px;
+            color: #999;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--vi-dark-grey);
+            border: 1px solid #444;
+            color: white;
+            border-radius: 4px;
+            font-size: 15px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 13px;
+            color: var(--vi-gold);
+            cursor: pointer;
+        }
+
+        .checkbox-group input {
+            width: auto;
+            margin-right: 10px;
+        }
+
+        input:focus { border-color: var(--vi-gold); outline: none; }
+
+        .btn-calculate {
+            width: 100%;
+            padding: 18px;
+            background-color: var(--vi-gold);
+            color: black;
+            border: none;
+            border-radius: 4px;
+            font-weight: 900;
+            font-size: 18px;
+            cursor: pointer;
+            text-transform: uppercase;
+            margin-top: 10px;
+        }
+
+        .results {
+            margin-top: 25px;
+            display: none;
+            background: #252525;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid var(--vi-gold);
+        }
+
+        .main-stat {
+            font-size: 32px;
+            color: var(--vi-gold);
+            font-weight: bold;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .stat-label { text-align: center; font-size: 12px; color: #aaa; margin-bottom: 5px;}
+
+        .summary-box {
+            display: flex;
+            justify-content: space-around;
+            border-top: 1px solid #444;
+            padding-top: 15px;
+        }
+
+        .summary-item { text-align: center; }
+        .summary-item div:first-child { font-size: 10px; color: #888; text-transform: uppercase; }
+        .summary-item div:last-child { font-size: 18px; font-weight: bold; color: var(--vi-green); }
+        
+        .disclaimer {
+            font-size: 11px;
+            color: #777;
+            text-align: center;
+            margin-top: 15px;
+            line-height: 1.3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="calculator-card">
+    <div class="header">
+        <h1><span>VEGAS</span>INSIDER</h1>
+        <p style="margin:5px 0 0; font-size: 14px; color: #888;">Fan Travel Expense Tracker</p>
+    </div>
+
+    <div class="input-row">
+        <div class="input-group">
+            <label>Current State</label>
+            <select id="stateSelect" onchange="populateCities()">
+                <option value="">Select State</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Home City</label>
+            <select id="citySelect">
+                <option value="">Select City</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="checkbox-group">
+        <input type="checkbox" id="localFan" onchange="toggleLocal()">
+        <label for="localFan" style="margin:0; color:var(--vi-gold); cursor:pointer;">I live in the stadium city (Local Fan)</label>
+    </div>
+
+    <div class="input-row">
+        <div class="input-group" id="milesContainer">
+            <label>Round Trip Miles</label>
+            <input type="number" id="miles" placeholder="e.g. 300">
+        </div>
+        <div class="input-group">
+            <label>Vehicle MPG</label>
+            <input type="number" id="mpg" value="22">
+        </div>
+    </div>
+
+    <div class="input-group">
+        <label>Number of Fans in Car</label>
+        <input type="number" id="fans" value="1">
+    </div>
+
+    <button class="btn-calculate" onclick="calculate()">Find My Lowest Cost</button>
+
+    <div id="results" class="results">
+        <div class="stat-label">CHEAPEST POSSIBLE TRIP COST</div>
+        <div class="main-stat" id="totalCost">$0.00</div>
+        
+        <div class="summary-box">
+            <div class="summary-item">
+                <div>Per Fan</div>
+                <div id="perFan">$0.00</div>
+            </div>
+            <div class="summary-item">
+                <div>Best Price</div>
+                <div id="appliedPrice">$0.00</div>
+            </div>
+        </div>
+        
+        <p id="insight" style="font-size: 13px; color: #bbb; text-align: center; margin-top: 20px; line-height: 1.4; border-top: 1px solid #444; padding-top: 15px;"></p>
+        
+        <div class="disclaimer">
+            *Calculation Caveat: This is the absolute minimum you'll pay for gas if you use the <strong>cheapest</strong> identified gas station in your city based on current market data.
+        </div>
+    </div>
+</div>
+
+<script>
+    // Full Data from your list
+    const gasData = [
+        {s:"Alabama", c:"birmingham", st:"RaceWay", p:3.27}, {s:"Alabama", c:"mobile", st:"Walmart", p:3.27}, {s:"Alabama", c:"auburn", st:"Murphy USA", p:3.31}, {s:"Alabama", c:"dothan", st:"Murphy USA", p:3.31}, {s:"Alabama", c:"tuscaloosa", st:"Murphy USA", p:3.33}, {s:"Alabama", c:"huntsville", st:"Costco", p:3.39}, {s:"Alabama", c:"daphne", st:"Jetway", p:3.39}, {s:"Alabama", c:"valley", st:"Murphy USA", p:3.39}, {s:"Alabama", c:"decatur", st:"Shell", p:3.39}, {s:"Alabama", c:"gadsden", st:"Fuel Depot", p:3.41}, {s:"Alabama", c:"talladega", st:"Pilot", p:3.42}, {s:"Alabama", c:"montgomery", st:"Walmart", p:3.43}, {s:"Alabama", c:"anniston", st:"Army/Air Force Exchange Svc", p:3.48}, {s:"Alabama", c:"cullman", st:"Marathon", p:3.49}, {s:"Alabama", c:"selma", st:"Murphy USA", p:3.55}, {s:"Alabama", c:"florence", st:"Fuel City", p:3.57}, {s:"Alabama", c:"enterprise", st:"Circle K", p:3.58}, {s:"Alabama", c:"alexander-city", st:"Murphy USA", p:3.58}, {s:"Alabama", c:"albertville", st:"C&S Fuels", p:3.59}, {s:"Alabama", c:"fort-payne", st:"GAS 'N GO", p:3.59}, {s:"Alabama", c:"eufaula", st:"Murphy USA", p:3.69}, {s:"Alabama", c:"scottsboro", st:"Reed's Grocery", p:3.69}, {s:"Alabama", c:"troy", st:"Circle K", p:3.73},
+        {s:"Alaska", c:"fairbanks", st:"Costco", p:4.29}, {s:"Alaska", c:"anchorage", st:"Costco", p:4.34}, {s:"Alaska", c:"juneau", st:"Gas 'n Go Fleet", p:4.36},
+        {s:"Arizona", c:"phoenix", st:"Sam's Club", p:3.44}, {s:"Arizona", c:"tucson", st:"Costco", p:3.79}, {s:"Arizona", c:"lake-havasu-city", st:"Fastrip", p:3.83}, {s:"Arizona", c:"sierra-vista", st:"Chevron", p:3.99}, {s:"Arizona", c:"prescott", st:"Costco", p:3.99}, {s:"Arizona", c:"show-low", st:"Hon-Dah Mini-Mart", p:3.99}, {s:"Arizona", c:"flagstaff", st:"Kaibeto Market", p:3.99}, {s:"Arizona", c:"yuma", st:"ARCO & ampm", p:4.09}, {s:"Arizona", c:"nogales", st:"Pilot", p:4.09}, {s:"Arizona", c:"payson", st:"Marathon", p:4.15}, {s:"Arizona", c:"safford", st:"Jo Bi's Market", p:4.29},
+        {s:"Arkansas", c:"fayetteville", st:"Sam's Club", p:3.17}, {s:"Arkansas", c:"fort-smith", st:"Alon", p:3.19}, {s:"Arkansas", c:"searcy", st:"Murphy USA", p:3.21}, {s:"Arkansas", c:"jonesboro", st:"VP Racing Fuels", p:3.27}, {s:"Arkansas", c:"blytheville", st:"Dodge's Store", p:3.28}, {s:"Arkansas", c:"russellville", st:"Sunoco & APlus", p:3.28}, {s:"Arkansas", c:"hot-springs", st:"CITGO", p:3.29}, {s:"Arkansas", c:"pine-bluff", st:"Fuel Up Express", p:3.29}, {s:"Arkansas", c:"forrest-city", st:"Love's Travel Stop", p:3.29}, {s:"Arkansas", c:"little-rock", st:"Pilot", p:3.29}, {s:"Arkansas", c:"harrison", st:"Murphy USA", p:3.39}, {s:"Arkansas", c:"mountain-home", st:"Casey's", p:3.42}, {s:"Arkansas", c:"paragould", st:"Dodge's Store", p:3.45}, {s:"Arkansas", c:"hope", st:"Shell", p:3.49}, {s:"Arkansas", c:"arkadelphia", st:"Pilot", p:3.59}, {s:"Arkansas", c:"camden", st:"The Corner", p:3.59}, {s:"Arkansas", c:"batesville", st:"Murphy USA", p:3.64}, {s:"Arkansas", c:"el-dorado", st:"Wildcat Country Store", p:3.67}, {s:"Arkansas", c:"magnolia", st:"Murphy USA", p:3.69}, {s:"Arkansas", c:"helena", st:"Murphy USA", p:3.73},
+        {s:"California", c:"san-diego", st:"Rincon Travel Plaza", p:4.53}, {s:"California", c:"hanford", st:"Yokut Gas Station", p:4.75}, {s:"California", c:"los-angeles", st:"Berri Brothers", p:4.79}, {s:"California", c:"yuba-city", st:"Costco", p:4.79}, {s:"California", c:"fresno", st:"EZ Trip", p:4.79}, {s:"California", c:"chico", st:"Feather Falls Mini Mart", p:4.79}, {s:"California", c:"riverside", st:"Agua Caliente Fuel", p:4.87}, {s:"California", c:"el-centro", st:"7-Eleven", p:4.89}, {s:"California", c:"sacramento", st:"Costco", p:4.89}, {s:"California", c:"modesto", st:"Great Gas", p:4.95}, {s:"California", c:"stockton", st:"Maverik", p:4.98}, {s:"California", c:"san-francisco", st:"ARCO & ampm", p:4.99}, {s:"California", c:"redding", st:"Costco", p:4.99}, {s:"California", c:"san-jose", st:"Costco", p:4.99}, {s:"California", c:"merced", st:"Delhi Gas And Food Mart", p:4.99}, {s:"California", c:"madera", st:"EZ Trip", p:4.99}, {s:"California", c:"crescent-city", st:"Lucky 7 Fuel Mart", p:4.99}, {s:"California", c:"red-bluff", st:"Rolling Hills Travel Center", p:4.99}, {s:"California", c:"ukiah", st:"Costco", p:5.09}, {s:"California", c:"napa", st:"Costco", p:5.09}, {s:"California", c:"visalia", st:"Quick Fill", p:5.09}, {s:"California", c:"santa-maria", st:"Conserv Fuel", p:5.15}, {s:"California", c:"salinas", st:"Marathon", p:5.15}, {s:"California", c:"truckee", st:"Best Gas & Bear River Market", p:5.19}, {s:"California", c:"clearlake", st:"Big Valley Market and Fuel", p:5.19}, {s:"California", c:"oxnard", st:"Sinclair", p:5.23}, {s:"California", c:"vallejo", st:"Texaco & ExtraMile", p:5.23}, {s:"California", c:"san-luis-obispo", st:"Sinclair", p:5.27}, {s:"California", c:"santa-cruz", st:"Costco", p:5.29}, {s:"California", c:"santa-rosa", st:"Kenwood Super Gas", p:5.37}, {s:"California", c:"eureka", st:"Play Station 777", p:5.54}, {s:"California", c:"susanville", st:"Diamond Mtn. Mini Mart", p:5.64},
+        {s:"Colorado", c:"denver", st:"Costco", p:3.29}, {s:"Colorado", c:"colorado-springs", st:"Costco", p:3.35}, {s:"Colorado", c:"boulder", st:"Costco", p:3.38}, {s:"Colorado", c:"greeley", st:"Sinclair", p:3.42}, {s:"Colorado", c:"sterling", st:"Sinclair", p:3.49}, {s:"Colorado", c:"fort-morgan", st:"Love's Travel Stop", p:3.55}, {s:"Colorado", c:"pueblo", st:"Murphy USA", p:3.55}, {s:"Colorado", c:"fort-collins", st:"Sam's Club", p:3.58}, {s:"Colorado", c:"ca%C3%B1on-city", st:"Everyday", p:3.68}, {s:"Colorado", c:"grand-junction", st:"Maverik", p:3.85}, {s:"Colorado", c:"durango", st:"Thrift Way", p:3.88}, {s:"Colorado", c:"edwards", st:"Costco", p:3.99}, {s:"Colorado", c:"montrose", st:"Maverik", p:4.14},
+        {s:"Connecticut", c:"bridgeport", st:"Gulf", p:3.47}, {s:"Connecticut", c:"new-haven", st:"CITGO", p:3.59}, {s:"Connecticut", c:"hartford", st:"Costco", p:3.59}, {s:"Connecticut", c:"norwich", st:"CITGO", p:3.70}, {s:"Connecticut", c:"torrington", st:"The Road Runners Gas Station", p:3.77},
+        {s:"Delaware", c:"dover", st:"Liberty", p:3.60},
+        {s:"Florida", c:"panama-city", st:"Circle K", p:3.39}, {s:"Florida", c:"miami", st:"Costco", p:3.42}, {s:"Florida", c:"pensacola", st:"Tom Thumb", p:3.45}, {s:"Florida", c:"tampa", st:"Sam's Club", p:3.49}, {s:"Florida", c:"the-villages", st:"Walmart Neighborhood Market", p:3.51}, {s:"Florida", c:"ocala", st:"Murphy USA", p:3.53}, {s:"Florida", c:"orlando", st:"BP", p:3.55}, {s:"Florida", c:"palm-bay", st:"Moose Fuel", p:3.57}, {s:"Florida", c:"lake-city", st:"Circle K", p:3.59}, {s:"Florida", c:"lakeland", st:"Love's Travel Stop", p:3.59}, {s:"Florida", c:"north-port", st:"Walmart", p:3.64}, {s:"Florida", c:"gainesville", st:"Circle K", p:3.65}, {s:"Florida", c:"jacksonville", st:"Shell", p:3.65}, {s:"Florida", c:"port-st.-lucie", st:"BP", p:3.68}, {s:"Florida", c:"punta-gorda", st:"Sam's Club", p:3.68}, {s:"Florida", c:"tallahassee", st:"Circle K", p:3.69}, {s:"Florida", c:"cape-coral", st:"Costco", p:3.69}, {s:"Florida", c:"sebastian", st:"Sam's Club", p:3.74}, {s:"Florida", c:"homosassa-springs", st:"Circle K", p:3.75}, {s:"Florida", c:"deltona", st:"Walmart", p:3.76}, {s:"Florida", c:"arcadia", st:"Speedway", p:3.77}, {s:"Florida", c:"palatka", st:"BP", p:3.79}, {s:"Florida", c:"sebring", st:"Murphy Express", p:3.79}, {s:"Florida", c:"naples", st:"Shell", p:3.81}, {s:"Florida", c:"clewiston", st:"Speedway", p:3.81}, {s:"Florida", c:"wauchula", st:"Speedway", p:3.82}, {s:"Florida", c:"key-west", st:"Tom Thumb FL", p:3.89},
+        {s:"Georgia", c:"dalton", st:"Victory Fuels", p:2.99}, {s:"Georgia", c:"hinesville", st:"Enmarket", p:3.01}, {s:"Georgia", c:"columbus", st:"Sam's Club", p:3.07}, {s:"Georgia", c:"savannah", st:"Circle K", p:3.09}, {s:"Georgia", c:"atlanta", st:"Costco", p:3.09}, {s:"Georgia", c:"athens", st:"Costco", p:3.09}, {s:"Georgia", c:"brunswick", st:"Sam's Club", p:3.09}, {s:"Georgia", c:"augusta", st:"BP", p:3.13}, {s:"Georgia", c:"albany", st:"Sam's Club", p:3.13}, {s:"Georgia", c:"macon", st:"Exxon & Circle K", p:3.14}, {s:"Georgia", c:"gainesville", st:"Sam's Club", p:3.14}, {s:"Georgia", c:"waycross", st:"Murphy USA", p:3.15}, {s:"Georgia", c:"cornelia", st:"BP", p:3.19}, {s:"Georgia", c:"jesup", st:"El Cheapo", p:3.19}, {s:"Georgia", c:"fitzgerald", st:"Valero", p:3.19}, {s:"Georgia", c:"rome", st:"Murphy USA", p:3.22}, {s:"Georgia", c:"cedartown", st:"CITGO", p:3.24}, {s:"Georgia", c:"calhoun", st:"MAPCO", p:3.24}, {s:"Georgia", c:"lagrange", st:"Valero", p:3.24}, {s:"Georgia", c:"statesboro", st:"Enmarket", p:3.25}, {s:"Georgia", c:"cordele", st:"Love's Travel Stop", p:3.31}, {s:"Georgia", c:"milledgeville", st:"Marathon", p:3.34}, {s:"Georgia", c:"valdosta", st:"Sam's Club", p:3.34}, {s:"Georgia", c:"americus", st:"Wayne's World", p:3.34}, {s:"Georgia", c:"toccoa", st:"Valero", p:3.37}, {s:"Georgia", c:"tifton", st:"Walmart", p:3.37}, {s:"Georgia", c:"summerville", st:"AMERICAN’S ONE STOP", p:3.39}, {s:"Georgia", c:"bainbridge", st:"Nic's Quick Stop", p:3.44}, {s:"Georgia", c:"thomaston", st:"Circle K", p:3.45}, {s:"Georgia", c:"thomasville", st:"Circle K", p:3.45}, {s:"Georgia", c:"dublin", st:"Valero", p:3.48}, {s:"Georgia", c:"vidalia", st:"Marathon", p:3.49}, {s:"Georgia", c:"moultrie", st:"Piggly Wiggly Express", p:3.50}, {s:"Georgia", c:"douglas", st:"Circle K", p:3.54}, {s:"Georgia", c:"st.-marys", st:"Pilot", p:3.65},
+        {s:"Hawaii", c:"kahului", st:"Maui Oil", p:4.79}, {s:"Hawaii", c:"honolulu", st:"Costco", p:4.85}, {s:"Hawaii", c:"hilo", st:"Big Island Energy", p:5.27}, {s:"Hawaii", c:"kapaa", st:"Costco", p:5.39},
+        {s:"Idaho", c:"coeur-d'alene", st:"Local Market Post Falls-Chevro", p:3.89}, {s:"Idaho", c:"lewiston", st:"Maverik", p:3.98}, {s:"Idaho", c:"mountain-home", st:"Pilot", p:4.00}, {s:"Idaho", c:"idaho-falls", st:"Costco", p:4.07}, {s:"Idaho", c:"twin-falls", st:"Costco", p:4.09}, {s:"Idaho", c:"pocatello", st:"Costco", p:4.09}, {s:"Idaho", c:"boise-city", st:"Costco", p:4.12}, {s:"Idaho", c:"blackfoot", st:"Phillips 66", p:4.15}, {s:"Idaho", c:"moscow", st:"CFN", p:4.16}, {s:"Idaho", c:"burley", st:"Sinclair", p:4.16}, {s:"Idaho", c:"rexburg", st:"Conoco & Get Yours", p:4.18},
+        {s:"Illinois", c:"chicago", st:"Family Express", p:3.25}, {s:"Illinois", c:"quincy", st:"Sam's Club", p:3.52}, {s:"Illinois", c:"peoria", st:"Casey's", p:3.69}, {s:"Illinois", c:"effingham", st:"Casey's", p:3.69}, {s:"Illinois", c:"decatur", st:"Sam's Club", p:3.75}, {s:"Illinois", c:"sterling", st:"Beck's", p:3.79}, {s:"Illinois", c:"champaign", st:"Casey's", p:3.83}, {s:"Illinois", c:"rockford", st:"Walmart", p:3.86}, {s:"Illinois", c:"kankakee", st:"Casey's", p:3.87}, {s:"Illinois", c:"bloomington", st:"Sam's Club", p:3.87}, {s:"Illinois", c:"charleston", st:"Marathon & Circle K", p:3.88}, {s:"Illinois", c:"dixon", st:"Casey's", p:3.89}, {s:"Illinois", c:"danville", st:"Casey's", p:3.89}, {s:"Illinois", c:"canton", st:"Ipava FAST STOP Express", p:3.89}, {s:"Illinois", c:"mount-vernon", st:"Love's Travel Stop", p:3.89}, {s:"Illinois", c:"springfield", st:"Sam's Club", p:3.89}, {s:"Illinois", c:"jacksonville", st:"Winchester FAST STOP", p:3.89}, {s:"Illinois", c:"taylorville", st:"Casey's", p:3.91}, {s:"Illinois", c:"macomb", st:"BP", p:3.93}, {s:"Illinois", c:"rochelle", st:"Casey's", p:3.93}, {s:"Illinois", c:"lincoln", st:"Casey's", p:3.99}, {s:"Illinois", c:"carbondale", st:"Casey's", p:4.03}, {s:"Illinois", c:"galesburg", st:"Circle K", p:4.07}, {s:"Illinois", c:"pontiac", st:"Circle K", p:4.07}, {s:"Illinois", c:"centralia", st:"Jumpin Jimmy's", p:4.10}, {s:"Illinois", c:"freeport", st:"Casey's", p:4.15},
+        {s:"Indiana", c:"columbus", st:"GetGo", p:3.12}, {s:"Indiana", c:"indianapolis", st:"GetGo", p:3.18}, {s:"Indiana", c:"richmond", st:"Speedway", p:3.19}, {s:"Indiana", c:"elkhart", st:"Casey's", p:3.37}, {s:"Indiana", c:"marion", st:"BP", p:3.39}, {s:"Indiana", c:"evansville", st:"Dodge's Store", p:3.39}, {s:"Indiana", c:"peru", st:"Marathon", p:3.39}, {s:"Indiana", c:"muncie", st:"Pilot", p:3.39}, {s:"Indiana", c:"terre-haute", st:"Sam's Club", p:3.43}, {s:"Indiana", c:"south-bend", st:"Costco", p:3.44}, {s:"Indiana", c:"warsaw", st:"Marathon", p:3.46}, {s:"Indiana", c:"plymouth", st:"BP", p:3.48}, {s:"Indiana", c:"new-castle", st:"ARCO", p:3.49}, {s:"Indiana", c:"michigan-city", st:"GoLo", p:3.51}, {s:"Indiana", c:"kokomo", st:"Marathon", p:3.51}, {s:"Indiana", c:"greensburg", st:"Amoco", p:3.52}, {s:"Indiana", c:"fort-wayne", st:"Shell", p:3.52}, {s:"Indiana", c:"bloomington", st:"Sam's Club", p:3.53}, {s:"Indiana", c:"wabash", st:"Circle K", p:3.54}, {s:"Indiana", c:"jasper", st:"Qycco", p:3.54}, {s:"Indiana", c:"auburn", st:"Casey's", p:3.55}, {s:"Indiana", c:"angola", st:"Murphy USA", p:3.55}, {s:"Indiana", c:"lafayette", st:"Sam's Club", p:3.56}, {s:"Indiana", c:"washington", st:"Circle K", p:3.58}, {s:"Indiana", c:"huntington", st:"BP", p:3.59}, {s:"Indiana", c:"crawfordsville", st:"Casey's", p:3.59}, {s:"Indiana", c:"logansport", st:"CountryMark", p:3.59}, {s:"Indiana", c:"decatur", st:"Marathon & All-American Stores", p:3.59}, {s:"Indiana", c:"kendallville", st:"Murphy USA", p:3.59}, {s:"Indiana", c:"connersville", st:"Shell", p:3.59}, {s:"Indiana", c:"seymour", st:"Marathon", p:3.60}, {s:"Indiana", c:"madison", st:"Kroger", p:3.64}, {s:"Indiana", c:"frankfort", st:"Murphy USA", p:3.68}, {s:"Indiana", c:"north-vernon", st:"Marathon", p:3.71}, {s:"Indiana", c:"bedford", st:"Heltonville Store", p:3.75}, {s:"Indiana", c:"vincennes", st:"CountryMark", p:3.79},
+        {s:"Iowa", c:"pella", st:"Casey's", p:2.99}, {s:"Iowa", c:"newton", st:"Casey's", p:3.04}, {s:"Iowa", c:"fort-madison", st:"Casey's", p:3.09}, {s:"Iowa", c:"des-moines", st:"Sam's Club", p:3.11}, {s:"Iowa", c:"sioux-city", st:"Sam's Club", p:3.12}, {s:"Iowa", c:"oskaloosa", st:"Casey's", p:3.15}, {s:"Iowa", c:"ames", st:"Mega Saver", p:3.18}, {s:"Iowa", c:"waterloo", st:"Love's Travel Stop", p:3.19}, {s:"Iowa", c:"cedar-rapids", st:"Fas Fuel", p:3.25}, {s:"Iowa", c:"ottumwa", st:"Fast & Fresh", p:3.25}, {s:"Iowa", c:"davenport", st:"Costco", p:3.26}, {s:"Iowa", c:"fort-dodge", st:"Fort Dodge FAST STOP Express", p:3.27}, {s:"Iowa", c:"mason-city", st:"Murphy USA", p:3.27}, {s:"Iowa", c:"iowa-city", st:"Costco", p:3.32}, {s:"Iowa", c:"burlington", st:"Murphy USA", p:3.33}, {s:"Iowa", c:"spencer", st:"Casey's", p:3.35}, {s:"Iowa", c:"clinton", st:"Casey's", p:3.35}, {s:"Iowa", c:"storm-lake", st:"Murphy USA", p:3.35}, {s:"Iowa", c:"dubuque", st:"Hy-Vee", p:3.48}, {s:"Iowa", c:"spirit-lake", st:"Casey's", p:3.49}, {s:"Iowa", c:"boone", st:"Casey's", p:3.49}, {s:"Iowa", c:"muscatine", st:"Casey's", p:3.49}, {s:"Iowa", c:"marshalltown", st:"Sinclair", p:3.64},
+        {s:"Kansas", c:"wichita", st:"Costco", p:3.04}, {s:"Kansas", c:"emporia", st:"Walmart", p:3.11}, {s:"Kansas", c:"salina", st:"Pilot", p:3.14}, {s:"Kansas", c:"hutchinson", st:"Murphy USA", p:3.16}, {s:"Kansas", c:"dodge-city", st:"Love's Travel Stop", p:3.18}, {s:"Kansas", c:"garden-city", st:"Sam's Club", p:3.18}, {s:"Kansas", c:"hays", st:"24/7 Travel Store", p:3.19}, {s:"Kansas", c:"mcpherson", st:"Love's Travel Stop", p:3.19}, {s:"Kansas", c:"arkansas-city", st:"Phillips 66", p:3.19}, {s:"Kansas", c:"topeka", st:"24/7 Travel Store", p:3.24}, {s:"Kansas", c:"great-bend", st:"Odin Store", p:3.24}, {s:"Kansas", c:"ottawa", st:"Love's Travel Stop", p:3.34}, {s:"Kansas", c:"pittsburg", st:"Pitt Stop", p:3.39}, {s:"Kansas", c:"atchison", st:"BP", p:3.45}, {s:"Kansas", c:"coffeyville", st:"Casey's", p:3.47}, {s:"Kansas", c:"lawrence", st:"Cenex", p:3.47}, {s:"Kansas", c:"liberal", st:"Love's Travel Stop", p:3.47}, {s:"Kansas", c:"manhattan", st:"Phillips 66 & U-Stop Convenience Shops", p:3.47}, {s:"Kansas", c:"parsons", st:"Casey's", p:3.59},
+        {s:"Kentucky", c:"lexington", st:"goodstop by Casey's", p:3.39}, {s:"Kentucky", c:"bowling-green", st:"Allen County Farmers Service", p:3.45}, {s:"Kentucky", c:"owensboro", st:"Circle K", p:3.54}, {s:"Kentucky", c:"somerset", st:"CRC Fuel / UltraBurn Diesel & Midland Farms", p:3.54}, {s:"Kentucky", c:"mount-sterling", st:"Vice's Corner Market", p:3.55}, {s:"Kentucky", c:"central-city", st:"Murphy USA", p:3.56}, {s:"Kentucky", c:"paducah", st:"Sam's Club", p:3.58}, {s:"Kentucky", c:"murray", st:"Marathon", p:3.59}, {s:"Kentucky", c:"london", st:"Spur", p:3.59}, {s:"Kentucky", c:"madisonville", st:"Wicks Well Market", p:3.59}, {s:"Kentucky", c:"mayfield", st:"Casey's", p:3.61}, {s:"Kentucky", c:"middlesborough", st:"Murphy USA", p:3.64}, {s:"Kentucky", c:"elizabethtown", st:"Sam's Club", p:3.68}, {s:"Kentucky", c:"frankfort", st:"Speedway", p:3.71}, {s:"Kentucky", c:"danville", st:"Battlefield Station", p:3.72}, {s:"Kentucky", c:"campbellsville", st:"Murphy USA", p:3.74}, {s:"Kentucky", c:"glasgow", st:"Casey's", p:3.76}, {s:"Kentucky", c:"maysville", st:"Murphy USA", p:3.77}, {s:"Kentucky", c:"richmond", st:"Marathon", p:3.79},
+        {s:"Louisiana", c:"new-orleans", st:"Walmart", p:3.15}, {s:"Louisiana", c:"baton-rouge", st:"Costco", p:3.16}, {s:"Louisiana", c:"lafayette", st:"Murphy USA", p:3.18}, {s:"Louisiana", c:"houma", st:"Walmart", p:3.19}, {s:"Louisiana", c:"opelousas", st:"Love's Travel Stop", p:3.21}, {s:"Louisiana", c:"alexandria", st:"Murphy USA", p:3.22}, {s:"Louisiana", c:"monroe", st:"Murphy USA", p:3.24}, {s:"Louisiana", c:"shreveport", st:"Circle K", p:3.29}, {s:"Louisiana", c:"hammond", st:"Chevron", p:3.32}, {s:"Louisiana", c:"lake-charles", st:"Walmart", p:3.38}, {s:"Louisiana", c:"ruston", st:"Murphy USA", p:3.41}, {s:"Louisiana", c:"natchitoches", st:"Murphy USA", p:3.46}, {s:"Louisiana", c:"jennings", st:"Murphy USA", p:3.46}, {s:"Louisiana", c:"deridder", st:"Sunshine", p:3.47}, {s:"Louisiana", c:"bastrop", st:"Murphy USA", p:3.52}, {s:"Louisiana", c:"fort-polk-south", st:"Circle K", p:3.53}, {s:"Louisiana", c:"morgan-city", st:"Murphy USA", p:3.54}, {s:"Louisiana", c:"bogalusa", st:"Chevron", p:3.75},
+        {s:"Maine", c:"lewiston", st:"Walmart", p:3.60}, {s:"Maine", c:"augusta", st:"Irving & Circle K", p:3.65}, {s:"Maine", c:"bangor", st:"CITGO", p:3.77},
+        {s:"Maryland", c:"hagerstown", st:"Rutter's", p:3.42}, {s:"Maryland", c:"cumberland", st:"Sheetz", p:3.59}, {s:"Maryland", c:"baltimore", st:"BJ's", p:3.61}, {s:"Maryland", c:"salisbury", st:"Sam's Club", p:3.80}, {s:"Maryland", c:"cambridge", st:"Eagle Fuel", p:3.85}, {s:"Maryland", c:"easton", st:"Sunoco", p:3.93},
+        {s:"Massachusetts", c:"boston", st:"Atlantic Automotive", p:3.49}, {s:"Massachusetts", c:"springfield", st:"Costco", p:3.49}, {s:"Massachusetts", c:"worcester", st:"Sturbridge Gas", p:3.55}, {s:"Massachusetts", c:"barnstable-town", st:"United", p:3.65}, {s:"Massachusetts", c:"pittsfield", st:"Gulf", p:3.83},
+        {s:"Michigan", c:"battle-creek", st:"BP", p:3.23}, {s:"Michigan", c:"detroit", st:"CITGO", p:3.25}, {s:"Michigan", c:"monroe", st:"Kroger", p:3.34}, {s:"Michigan", c:"flint", st:"BP", p:3.39}, {s:"Michigan", c:"lansing", st:"Marathon", p:3.45}, {s:"Michigan", c:"grand-rapids", st:"Sam's Club", p:3.45}, {s:"Michigan", c:"jackson", st:"Sam's Club", p:3.45}, {s:"Michigan", c:"holland", st:"BP", p:3.47}, {s:"Michigan", c:"ann-arbor", st:"Costco", p:3.49}, {s:"Michigan", c:"adrian", st:"Exxon & BP", p:3.49}, {s:"Michigan", c:"alpena", st:"ARCO", p:3.51}, {s:"Michigan", c:"saginaw", st:"Sunoco", p:3.51}, {s:"Michigan", c:"houghton", st:"Krist", p:3.52}, {s:"Michigan", c:"owosso", st:"Valero", p:3.52}, {s:"Michigan", c:"midland", st:"Sunoco", p:3.54}, {s:"Michigan", c:"cadillac", st:"Meijer", p:3.57}, {s:"Michigan", c:"bay-city", st:"Amoco", p:3.59}, {s:"Michigan", c:"traverse-city", st:"Costco", p:3.59}, {s:"Michigan", c:"iron-mountain", st:"Kwik Trip", p:3.59}, {s:"Michigan", c:"sturgis", st:"Meijer", p:3.59}, {s:"Michigan", c:"coldwater", st:"Sunoco", p:3.59}, {s:"Michigan", c:"kalamazoo", st:"Village Xpress", p:3.60}, {s:"Michigan", c:"muskegon", st:"Montague Express", p:3.61}, {s:"Michigan", c:"alma", st:"Sunoco", p:3.62}, {s:"Michigan", c:"big-rapids", st:"Admiral", p:3.69}, {s:"Michigan", c:"niles", st:"Amoco", p:3.70}, {s:"Michigan", c:"marquette", st:"Kassels Midway", p:3.72}, {s:"Michigan", c:"escanaba", st:"Holiday & Circle K", p:3.75}, {s:"Michigan", c:"sault-ste.-marie", st:"Summit Gasoline", p:3.75},
+        {s:"Minnesota", c:"twin-cities", st:"Coborn's", p:3.24}, {s:"Minnesota", c:"brainerd", st:"Holiday", p:3.25}, {s:"Minnesota", c:"st.-cloud", st:"Costco", p:3.29}, {s:"Minnesota", c:"hutchinson", st:"Casey's", p:3.30}, {s:"Minnesota", c:"faribault", st:"Amoco", p:3.35}, {s:"Minnesota", c:"duluth", st:"Costco", p:3.35}, {s:"Minnesota", c:"rochester", st:"Cenex", p:3.45}, {s:"Minnesota", c:"owatonna", st:"Fleet Farm", p:3.45}, {s:"Minnesota", c:"worthington", st:"Casey's", p:3.49}, {s:"Minnesota", c:"austin", st:"Clark", p:3.49}, {s:"Minnesota", c:"new-ulm", st:"Luepke Oil", p:3.49}, {s:"Minnesota", c:"mankato", st:"Marathon & SuperAmerica", p:3.49}, {s:"Minnesota", c:"fergus-falls", st:"ARCO", p:3.53}, {s:"Minnesota", c:"red-wing", st:"61 Express", p:3.54}, {s:"Minnesota", c:"albert-lea", st:"Casey's", p:3.54}, {s:"Minnesota", c:"willmar", st:"Casey's", p:3.57}, {s:"Minnesota", c:"winona", st:"Cenex", p:3.57}, {s:"Minnesota", c:"bemidji", st:"Village One Stop", p:3.57}, {s:"Minnesota", c:"alexandria", st:"Pilot", p:3.59}, {s:"Minnesota", c:"fairmont", st:"Maverik", p:3.69}, {s:"Minnesota", c:"marshall", st:"Casey's", p:3.74},
+        {s:"Mississippi", c:"picayune", st:"Texaco", p:3.19}, {s:"Mississippi", c:"gulfport", st:"Buc-ee's", p:3.20}, {s:"Mississippi", c:"meridian", st:"Sam's Club", p:3.26}, {s:"Mississippi", c:"natchez", st:"CITGO", p:3.29}, {s:"Mississippi", c:"tupelo", st:"Dodge's Store", p:3.31}, {s:"Mississippi", c:"jackson", st:"Bzy Bee", p:3.34}, {s:"Mississippi", c:"hattiesburg", st:"Murphy Express", p:3.34}, {s:"Mississippi", c:"greenville", st:"Double Quick", p:3.39}, {s:"Mississippi", c:"laurel", st:"Murphy Express", p:3.39}, {s:"Mississippi", c:"starkville", st:"Walmart Neighborhood Market", p:3.44}, {s:"Mississippi", c:"corinth", st:"Murphy USA", p:3.45}, {s:"Mississippi", c:"columbus", st:"Murphy USA", p:3.45}, {s:"Mississippi", c:"mccomb", st:"Mike's Supermarket", p:3.47}, {s:"Mississippi", c:"vicksburg", st:"Murphy Express", p:3.49}, {s:"Mississippi", c:"indianola", st:"Double Quick", p:3.51}, {s:"Mississippi", c:"west-point", st:"Murphy USA", p:3.52}, {s:"Mississippi", c:"greenwood", st:"Murphy USA", p:3.55}, {s:"Mississippi", c:"brookhaven", st:"Murphy USA", p:3.57}, {s:"Mississippi", c:"oxford", st:"Murphy USA", p:3.65}, {s:"Mississippi", c:"grenada", st:"Mobil", p:3.67}, {s:"Mississippi", c:"clarksdale", st:"Exxon", p:3.69},
+        {s:"Missouri", c:"springfield", st:"Maverik", p:3.07}, {s:"Missouri", c:"joplin", st:"Walmart", p:3.13}, {s:"Missouri", c:"lebanon", st:"Casey's", p:3.28}, {s:"Missouri", c:"hannibal", st:"Great River Tire & Auto", p:3.29}, {s:"Missouri", c:"branson", st:"Wild Bill's Travel Center", p:3.29}, {s:"Missouri", c:"warrensburg", st:"Conoco", p:3.31}, {s:"Missouri", c:"st.-joseph", st:"Sam's Club", p:3.34}, {s:"Missouri", c:"rolla", st:"Casey's", p:3.38}, {s:"Missouri", c:"fort-leonard-wood", st:"Maverik", p:3.38}, {s:"Missouri", c:"columbia", st:"Gulf", p:3.39}, {s:"Missouri", c:"maryville", st:"Casey's", p:3.44}, {s:"Missouri", c:"marshall", st:"Conoco", p:3.44}, {s:"Missouri", c:"jefferson-city", st:"Crane's Country Store", p:3.44}, {s:"Missouri", c:"sedalia", st:"Phillips 66", p:3.48}, {s:"Missouri", c:"kennett", st:"CITGO", p:3.49}, {s:"Missouri", c:"st.-louis", st:"Costco", p:3.49}, {s:"Missouri", c:"farmington", st:"Murphy USA", p:3.49}, {s:"Missouri", c:"mexico", st:"Shell", p:3.49}, {s:"Missouri", c:"poplar-bluff", st:"Murphy USA", p:3.54}, {s:"Missouri", c:"kirksville", st:"Murphy USA", p:3.56}, {s:"Missouri", c:"west-plains", st:"Casey's", p:3.59}, {s:"Missouri", c:"sikeston", st:"Exxon", p:3.59}, {s:"Missouri", c:"cape-girardeau", st:"Clark", p:3.64}, {s:"Missouri", c:"moberly", st:"Murphy USA", p:3.64},
+        {s:"Montana", c:"helena", st:"Cenex", p:3.39}, {s:"Montana", c:"billings", st:"Costco", p:3.64}, {s:"Montana", c:"bozeman", st:"Costco", p:3.66}, {s:"Montana", c:"kalispell", st:"Conoco", p:3.69}, {s:"Montana", c:"great-falls", st:"Sam's Club", p:3.72}, {s:"Montana", c:"missoula", st:"Costco", p:3.75}, {s:"Montana", c:"butte", st:"Conoco & Town Pump", p:3.86},
+        {s:"Nebraska", c:"north-platte", st:"Flying J", p:2.97}, {s:"Nebraska", c:"omaha", st:"Costco", p:3.17}, {s:"Nebraska", c:"lincoln", st:"Costco", p:3.22}, {s:"Nebraska", c:"norfolk", st:"Sinclair", p:3.24}, {s:"Nebraska", c:"columbus", st:"Murphy USA", p:3.29}, {s:"Nebraska", c:"fremont", st:"Murphy USA", p:3.29}, {s:"Nebraska", c:"hastings", st:"Casey's", p:3.31}, {s:"Nebraska", c:"kearney", st:"Casey's", p:3.32}, {s:"Nebraska", c:"grand-island", st:"Casey's", p:3.34}, {s:"Nebraska", c:"lexington", st:"Cenex", p:3.34}, {s:"Nebraska", c:"scottsbluff", st:"Maverik", p:3.39}, {s:"Nebraska", c:"beatrice", st:"Casey's", p:3.49},
+        {s:"Nevada", c:"fernley", st:"Chevron", p:3.99}, {s:"Nevada", c:"elko", st:"Conoco", p:3.99}, {s:"Nevada", c:"pahrump", st:"Maverik", p:4.44}, {s:"Nevada", c:"gardnerville-ranchos", st:"ARCO & ampm", p:4.49}, {s:"Nevada", c:"reno", st:"One9 Fuel Stop", p:4.49}, {s:"Nevada", c:"fallon", st:"NEX", p:4.57},
+        {s:"New Hampshire", c:"concord", st:"CITGO", p:3.51}, {s:"New Hampshire", c:"claremont", st:"Irving", p:3.59}, {s:"New Hampshire", c:"manchester", st:"Cumberland Farms", p:3.64}, {s:"New Hampshire", c:"laconia", st:"Oasis Gas and Mini Mkt", p:3.70}, {s:"New Hampshire", c:"keene", st:"Mobil & Mr. Mike's", p:3.89},
+        {s:"New Jersey", c:"trenton", st:"Valero", p:3.65}, {s:"New Jersey", c:"vineland", st:"Conoco", p:3.77}, {s:"New Jersey", c:"atlantic-city", st:"BP & AAFES", p:3.79}, {s:"New Jersey", c:"ocean-city", st:"Conoco", p:3.97},
+        {s:"New Mexico", c:"santa-fe", st:"Avanyu Travel Plaza", p:3.26}, {s:"New Mexico", c:"alamogordo", st:"Circle K", p:3.31}, {s:"New Mexico", c:"roswell", st:"Sam's Club", p:3.34}, {s:"New Mexico", c:"albuquerque", st:"Premier", p:3.38}, {s:"New Mexico", c:"las-cruces", st:"Sam's Club", p:3.38}, {s:"New Mexico", c:"gallup", st:"Duke City Fueling", p:3.39}, {s:"New Mexico", c:"hobbs", st:"Valero", p:3.45}, {s:"New Mexico", c:"clovis", st:"Phillips 66 & Stripes", p:3.46}, {s:"New Mexico", c:"carlsbad", st:"Walmart", p:3.51}, {s:"New Mexico", c:"las-vegas", st:"Love's Travel Stop", p:3.52}, {s:"New Mexico", c:"ruidoso", st:"Alon", p:3.59}, {s:"New Mexico", c:"portales", st:"Alon", p:3.59}, {s:"New Mexico", c:"grants", st:"Route 66 Travel Center", p:3.64}, {s:"New Mexico", c:"farmington", st:"Little Water Express", p:3.69}, {s:"New Mexico", c:"deming", st:"Maverik", p:3.79}, {s:"New Mexico", c:"silver-city", st:"Valero", p:3.82}, {s:"New Mexico", c:"taos", st:"Hail Creek Travel Center", p:3.99}, {s:"New Mexico", c:"los-alamos", st:"Speedway", p:3.99},
+        {s:"New York", c:"olean", st:"Hoag's Gas Station", p:3.29}, {s:"New York", c:"buffalo", st:"Sunoco", p:3.39}, {s:"New York", c:"batavia", st:"Two Eagles", p:3.40}, {s:"New York", c:"rochester", st:"Costco", p:3.57}, {s:"New York", c:"new-york-city", st:"Costco", p:3.59}, {s:"New York", c:"binghamton", st:"SNK", p:3.59}, {s:"New York", c:"seneca-falls", st:"Fastrac", p:3.64}, {s:"New York", c:"albany", st:"Gasway", p:3.75}, {s:"New York", c:"corning", st:"Love's Travel Stop", p:3.75}, {s:"New York", c:"auburn", st:"Sunoco & Marathon", p:3.78}, {s:"New York", c:"syracuse", st:"CITGO", p:3.79}, {s:"New York", c:"utica", st:"Gas Way", p:3.79}, {s:"New York", c:"kingston", st:"Gulf", p:3.81}, {s:"New York", c:"hudson", st:"Gulf", p:3.83}, {s:"New York", c:"elmira", st:"CITGO", p:3.86}, {s:"New York", c:"glens-falls", st:"Unbranded", p:3.89}, {s:"New York", c:"plattsburgh", st:"Sam's Club", p:3.90}, {s:"New York", c:"oneonta", st:"Stewart's Shops", p:3.91}, {s:"New York", c:"watertown", st:"Valero", p:3.93}, {s:"New York", c:"amsterdam", st:"RaceWay Express", p:3.94}, {s:"New York", c:"malone", st:"Mobil", p:3.95}, {s:"New York", c:"ogdensburg", st:"Bradley's Service", p:3.99}, {s:"New York", c:"cortland", st:"Kwik Fill", p:3.99}, {s:"New York", c:"jamestown", st:"Noco", p:3.99}, {s:"New York", c:"gloversville", st:"Sunoco", p:3.99}, {s:"New York", c:"ithaca", st:"Valero", p:4.05},
+        {s:"North Carolina", c:"winston", st:"Sheetz", p:2.89}, {s:"North Carolina", c:"rocky-mount", st:"Sam's Club", p:3.33}, {s:"North Carolina", c:"hickory", st:"Sam's Club", p:3.37}, {s:"North Carolina", c:"fayetteville", st:"Sam's Club", p:3.39}, {s:"North Carolina", c:"burlington", st:"BJ's", p:3.40}, {s:"North Carolina", c:"greenville", st:"Sam's Club", p:3.40}, {s:"North Carolina", c:"greensboro", st:"Costco", p:3.41}, {s:"North Carolina", c:"goldsboro", st:"Sam's Club", p:3.41}, {s:"North Carolina", c:"shelby", st:"One Stop", p:3.42}, {s:"North Carolina", c:"charlotte", st:"Costco", p:3.43}, {s:"North Carolina", c:"wilson", st:"BP", p:3.45}, {s:"North Carolina", c:"raleigh", st:"Costco", p:3.45}, {s:"North Carolina", c:"jacksonville", st:"Sam's Club", p:3.45}, {s:"North Carolina", c:"wilmington", st:"Circle K", p:3.48}, {s:"North Carolina", c:"washington", st:"Murphy Express", p:3.48}, {s:"North Carolina", c:"pinehurst", st:"BJ's", p:3.49}, {s:"North Carolina", c:"durham", st:"BP", p:3.49}, {s:"North Carolina", c:"new-bern", st:"Circle K", p:3.49}, {s:"North Carolina", c:"dunn", st:"Murphy USA", p:3.49}, {s:"North Carolina", c:"henderson", st:"Exxon", p:3.52}, {s:"North Carolina", c:"asheville", st:"BP", p:3.53}, {s:"North Carolina", c:"mount-airy", st:"Murphy Express", p:3.53}, {s:"North Carolina", c:"albemarle", st:"Murphy Express", p:3.55}, {s:"North Carolina", c:"north-wilkesboro", st:"Murphy Express", p:3.57}, {s:"North Carolina", c:"kinston", st:"Murphy Express", p:3.57}, {s:"North Carolina", c:"lumberton", st:"Walmart", p:3.58}, {s:"North Carolina", c:"forest-city", st:"DK", p:3.59}, {s:"North Carolina", c:"elizabeth-city", st:"Eagle Mart", p:3.59}, {s:"North Carolina", c:"kill-devil-hills", st:"Shell", p:3.59}, {s:"North Carolina", c:"roanoke-rapids", st:"Speedway", p:3.59}, {s:"North Carolina", c:"laurinburg", st:"Murphy USA", p:3.62}, {s:"North Carolina", c:"rockingham", st:"Murphy USA", p:3.65}, {s:"North Carolina", c:"morehead-city", st:"Murphy USA", p:3.73}, {s:"North Carolina", c:"boone", st:"BP", p:3.79}, {s:"North Carolina", c:"brevard", st:"Marathon", p:3.79},
+        {s:"North Dakota", c:"fargo", st:"Costco", p:3.13}, {s:"North Dakota", c:"wahpeton", st:"Casey's", p:3.39}, {s:"North Dakota", c:"jamestown", st:"Casey's", p:3.39}, {s:"North Dakota", c:"grand-forks", st:"Sam's Club", p:3.40}, {s:"North Dakota", c:"bismarck", st:"Love's Travel Stop", p:3.44}, {s:"North Dakota", c:"minot", st:"Maverik", p:3.59}, {s:"North Dakota", c:"dickinson", st:"Simonson", p:3.59}, {s:"North Dakota", c:"williston", st:"Maverik", p:3.61},
+        {s:"Ohio", c:"lima", st:"Sam's Club", p:3.13}, {s:"Ohio", c:"toledo", st:"ARCO", p:3.18}, {s:"Ohio", c:"akron", st:"MAPCO & Circle K", p:3.18}, {s:"Ohio", c:"dayton", st:"Buc-ee's", p:3.19}, {s:"Ohio", c:"wapakoneta", st:"Fuel Mart", p:3.21}, {s:"Ohio", c:"cincinnati", st:"Wawa", p:3.25}, {s:"Ohio", c:"findlay", st:"Casey's", p:3.27}, {s:"Ohio", c:"cleveland", st:"Marathon", p:3.27}, {s:"Ohio", c:"celina", st:"Casey's", p:3.29}, {s:"Ohio", c:"tiffin", st:"Kroger", p:3.29}, {s:"Ohio", c:"youngstown", st:"Sam's Club", p:3.29}, {s:"Ohio", c:"columbus", st:"Marathon", p:3.31}, {s:"Ohio", c:"canton", st:"Costco", p:3.33}, {s:"Ohio", c:"sidney", st:"Marathon", p:3.37}, {s:"Ohio", c:"van-wert", st:"Murphy USA", p:3.37}, {s:"Ohio", c:"mansfield", st:"Sam's Club", p:3.37}, {s:"Ohio", c:"springfield", st:"VP Racing Fuels", p:3.38}, {s:"Ohio", c:"zanesville", st:"Sunoco", p:3.39}, {s:"Ohio", c:"chillicothe", st:"Sam's Club", p:3.42}, {s:"Ohio", c:"greenville", st:"Casey's", p:3.43}, {s:"Ohio", c:"fremont", st:"Clark", p:3.44}, {s:"Ohio", c:"cambridge", st:"Fuel Mart", p:3.44}, {s:"Ohio", c:"washington-court-house", st:"BP", p:3.45}, {s:"Ohio", c:"wooster", st:"Marathon", p:3.45}, {s:"Ohio", c:"salem", st:"GetGo", p:3.46}, {s:"Ohio", c:"bellefontaine", st:"Marathon", p:3.49}, {s:"Ohio", c:"wilmington", st:"Murphy USA", p:3.49}, {s:"Ohio", c:"defiance", st:"S&G", p:3.49}, {s:"Ohio", c:"marion", st:"Marathon & Shell", p:3.52}, {s:"Ohio", c:"portsmouth", st:"Jeep Fuel", p:3.54}, {s:"Ohio", c:"ashland", st:"Marathon & EagleStores", p:3.54}, {s:"Ohio", c:"coshocton", st:"Murphy USA", p:3.55}, {s:"Ohio", c:"sandusky", st:"Sam's Club", p:3.56}, {s:"Ohio", c:"mount-vernon", st:"Marathon", p:3.57}, {s:"Ohio", c:"ashtabula", st:"Grab & Go", p:3.59}, {s:"Ohio", c:"urbana", st:"Valero & Shell", p:3.59}, {s:"Ohio", c:"bucyrus", st:"Valero", p:3.61}, {s:"Ohio", c:"new-philadelphia", st:"Sibley Mart", p:3.62}, {s:"Ohio", c:"athens", st:"Go Mart", p:3.69}, {s:"Ohio", c:"norwalk", st:"Marathon", p:3.69},
+        {s:"Oklahoma", c:"ardmore", st:"Valero", p:2.94}, {s:"Oklahoma", c:"oklahoma-city", st:"Walmart", p:2.96}, {s:"Oklahoma", c:"stillwater", st:"Maverik", p:3.03}, {s:"Oklahoma", c:"lawton", st:"Murphy USA", p:3.04}, {s:"Oklahoma", c:"tahlequah", st:"Shell & E-Z Mart", p:3.08}, {s:"Oklahoma", c:"muskogee", st:"Murphy USA", p:3.12}, {s:"Oklahoma", c:"tulsa", st:"Costco", p:3.14}, {s:"Oklahoma", c:"altus", st:"Murphy USA", p:3.15}, {s:"Oklahoma", c:"enid", st:"Q-Mart", p:3.15}, {s:"Oklahoma", c:"ada", st:"Murphy USA", p:3.16}, {s:"Oklahoma", c:"ponca-city", st:"Murphy USA", p:3.18}, {s:"Oklahoma", c:"miami", st:"Murphy USA", p:3.18}, {s:"Oklahoma", c:"shawnee", st:"Murphy USA", p:3.18}, {s:"Oklahoma", c:"durant", st:"Murphy USA", p:3.18}, {s:"Oklahoma", c:"bartlesville", st:"For Your Convenience", p:3.19}, {s:"Oklahoma", c:"woodward", st:"Murphy USA", p:3.23}, {s:"Oklahoma", c:"mcalester", st:"Kings Travel Plaza", p:3.25}, {s:"Oklahoma", c:"guymon", st:"Love's Travel Stop", p:3.25}, {s:"Oklahoma", c:"duncan", st:"Love's Country Stores", p:3.27}, {s:"Oklahoma", c:"elk-city", st:"Flying J", p:3.29}, {s:"Oklahoma", c:"weatherford", st:"Phillips 66", p:3.49},
+        {s:"Oregon", c:"ontario", st:"Shell", p:4.35}, {s:"Oregon", c:"portland", st:"ARCO", p:4.39}, {s:"Oregon", c:"bend", st:"ARCO & ampm", p:4.39}, {s:"Oregon", c:"salem", st:"ARCO & ampm", p:4.48}, {s:"Oregon", c:"eugene", st:"Mobil & Sinclair", p:4.49}, {s:"Oregon", c:"hermiston", st:"Conoco", p:4.54}, {s:"Oregon", c:"medford", st:"Costco", p:4.55}, {s:"Oregon", c:"grants-pass", st:"ARCO", p:4.64}, {s:"Oregon", c:"the-dalles", st:"Astro", p:4.64}, {s:"Oregon", c:"la-grande", st:"Flying J", p:4.64}, {s:"Oregon", c:"corvallis", st:"Towne Pump", p:4.65}, {s:"Oregon", c:"roseburg", st:"Love's Travel Stop", p:4.68}, {s:"Oregon", c:"klamath-falls", st:"Riy's Market Inc", p:4.69}, {s:"Oregon", c:"prineville", st:"Towne Pump", p:4.69}, {s:"Oregon", c:"hood-river", st:"VP Racing Fuels & US Market", p:4.69}, {s:"Oregon", c:"astoria", st:"Coast Guard Exchange", p:4.79}, {s:"Oregon", c:"brookings", st:"Conoco", p:4.94}, {s:"Oregon", c:"coos-bay", st:"Marathon", p:4.96},
+        {s:"Pennsylvania", c:"philadelphia", st:"Costco", p:3.59}, {s:"Pennsylvania", c:"lewisburg", st:"i-Fuel", p:3.62}, {s:"Pennsylvania", c:"allentown", st:"Costco", p:3.65}, {s:"Pennsylvania", c:"bloomsburg", st:"Wawa", p:3.67}, {s:"Pennsylvania", c:"williamsport", st:"Kwik Fill", p:3.69}, {s:"Pennsylvania", c:"chambersburg", st:"Miller's Fuels", p:3.69}, {s:"Pennsylvania", c:"york", st:"Rutter's", p:3.69}, {s:"Pennsylvania", c:"sunbury", st:"Sunoco & 7-Eleven", p:3.69}, {s:"Pennsylvania", c:"erie", st:"CITGO", p:3.79}, {s:"Pennsylvania", c:"harrisburg", st:"Costco", p:3.79}, {s:"Pennsylvania", c:"lancaster", st:"Rutter's", p:3.79}, {s:"Pennsylvania", c:"scranton", st:"Sunoco", p:3.79}, {s:"Pennsylvania", c:"pittsburgh", st:"University Korner", p:3.79}, {s:"Pennsylvania", c:"reading", st:"Marathon", p:3.83}, {s:"Pennsylvania", c:"gettysburg", st:"Shell & Liberty", p:3.83}, {s:"Pennsylvania", c:"east-stroudsburg", st:"Onvo", p:3.85}, {s:"Pennsylvania", c:"bradford", st:"Exxon", p:3.87}, {s:"Pennsylvania", c:"indiana", st:"Accent Fuels", p:3.89}, {s:"Pennsylvania", c:"pottsville", st:"Quality Discount Heating Oil", p:3.89}, {s:"Pennsylvania", c:"somerset", st:"S&S Quick Stop", p:3.89}, {s:"Pennsylvania", c:"oil-city", st:"Shell", p:3.89}, {s:"Pennsylvania", c:"state-college", st:"Uni-Mart", p:3.89}, {s:"Pennsylvania", c:"new-castle", st:"West Side Mini Mart", p:3.89}, {s:"Pennsylvania", c:"lewistown", st:"Uni-Mart", p:3.93}, {s:"Pennsylvania", c:"dubois", st:"Keystone", p:3.94}, {s:"Pennsylvania", c:"lebanon", st:"Walmart", p:3.97}, {s:"Pennsylvania", c:"johnstown", st:"Cambria Pit Stop", p:3.98}, {s:"Pennsylvania", c:"lock-haven", st:"Lykens Market", p:3.98}, {s:"Pennsylvania", c:"sayre", st:"B&S Convenience", p:3.99}, {s:"Pennsylvania", c:"selinsgrove", st:"Blue Apple Mart", p:3.99}, {s:"Pennsylvania", c:"altoona", st:"Snappy's", p:3.99}, {s:"Pennsylvania", c:"meadville", st:"CITGO", p:4.09}, {s:"Pennsylvania", c:"huntingdon", st:"Sheetz", p:4.09}, {s:"Pennsylvania", c:"st.-marys", st:"Choice", p:4.12}, {s:"Pennsylvania", c:"warren", st:"CITGO", p:4.19},
+        {s:"Rhode Island", c:"providence", st:"HiLo Gas", p:3.57},
+        {s:"South Carolina", c:"greenville", st:"Walmart", p:3.21}, {s:"South Carolina", c:"charleston", st:"Costco", p:3.33}, {s:"South Carolina", c:"seneca", st:"Exxon & Texaco", p:3.33}, {s:"South Carolina", c:"spartanburg", st:"Hot Spot", p:3.34}, {s:"South Carolina", c:"florence", st:"Murphy USA", p:3.34}, {s:"South Carolina", c:"columbia", st:"Murphy Express", p:3.36}, {s:"South Carolina", c:"myrtle-beach", st:"Circle K", p:3.37}, {s:"South Carolina", c:"greenwood", st:"Cokesbury Grocery", p:3.39}, {s:"South Carolina", c:"georgetown", st:"7- Eleven", p:3.42}, {s:"South Carolina", c:"gaffney", st:"Corner Stop", p:3.42}, {s:"South Carolina", c:"sumter", st:"BJ's", p:3.43}, {s:"South Carolina", c:"orangeburg", st:"Dodge's Store", p:3.45}, {s:"South Carolina", c:"hilton-head-island", st:"NEX", p:3.54}, {s:"South Carolina", c:"bennettsville", st:"Murphy Express", p:3.57}, {s:"South Carolina", c:"newberry", st:"Pilot", p:3.59},
+        {s:"South Dakota", c:"vermillion", st:"Freedom", p:2.59}, {s:"South Dakota", c:"sioux-falls", st:"Costco", p:3.33}, {s:"South Dakota", c:"mitchell", st:"Sinclair", p:3.38}, {s:"South Dakota", c:"yankton", st:"Shell", p:3.39}, {s:"South Dakota", c:"pierre", st:"Cenex & Marathon", p:3.39}, {s:"South Dakota", c:"brookings", st:"E24", p:3.41}, {s:"South Dakota", c:"huron", st:"Casey's", p:3.45}, {s:"South Dakota", c:"rapid-city", st:"Sam's Club", p:3.59}, {s:"South Dakota", c:"aberdeen", st:"Holiday", p:3.62}, {s:"South Dakota", c:"spearfish", st:"Yesway", p:3.69},
+        {s:"Tennessee", c:"chattanooga", st:"Mobil", p:3.09}, {s:"Tennessee", c:"nashville", st:"Sam's Club", p:3.12}, {s:"Tennessee", c:"knoxville", st:"Weigel's", p:3.17}, {s:"Tennessee", c:"sevierville", st:"BJ's", p:3.30}, {s:"Tennessee", c:"memphis", st:"Walmart", p:3.31}, {s:"Tennessee", c:"tullahoma", st:"Gulf", p:3.39}, {s:"Tennessee", c:"clarksville", st:"Sam's Club", p:3.39}, {s:"Tennessee", c:"newport", st:"RaceTrac", p:3.40}, {s:"Tennessee", c:"cleveland", st:"Circle K", p:3.45}, {s:"Tennessee", c:"crossville", st:"Buc-ee's", p:3.47}, {s:"Tennessee", c:"morristown", st:"Love's Travel Stop", p:3.47}, {s:"Tennessee", c:"cookeville", st:"Love's Travel Stop", p:3.48}, {s:"Tennessee", c:"shelbyville", st:"Murphy USA", p:3.48}, {s:"Tennessee", c:"jackson", st:"Exxon & Marathon", p:3.49}, {s:"Tennessee", c:"lawrenceburg", st:"Three Oaks Market", p:3.49}, {s:"Tennessee", c:"kingsport", st:"Walmart Neighborhood Market", p:3.54}, {s:"Tennessee", c:"lewisburg", st:"Murphy USA", p:3.57}, {s:"Tennessee", c:"paris", st:"Murphy Express", p:3.58}, {s:"Tennessee", c:"dyersburg", st:"Murphy USA", p:3.58}, {s:"Tennessee", c:"johnson-city", st:"Weigel's", p:3.58}, {s:"Tennessee", c:"athens", st:"CITGO", p:3.59}, {s:"Tennessee", c:"martin", st:"Dees Oil", p:3.59}, {s:"Tennessee", c:"greeneville", st:"Murphy USA", p:3.63}, {s:"Tennessee", c:"mcminnville", st:"Unbranded", p:3.65}, {s:"Tennessee", c:"union-city", st:"Murphy USA", p:3.69}, {s:"Tennessee", c:"brownsville", st:"Murphy USA", p:3.82},
+        {s:"Texas", c:"austin", st:"CITGO", p:2.89}, {s:"Texas", c:"houston", st:"NASA Foodmart", p:2.99}, {s:"Texas", c:"lubbock", st:"Phillips 66", p:2.99}, {s:"Texas", c:"dallas", st:"Sam's Club", p:2.99}, {s:"Texas", c:"longview", st:"Fresh by Brookshires", p:3.01}, {s:"Texas", c:"texarkana", st:"Sam's Club", p:3.03}, {s:"Texas", c:"amarillo", st:"Murphy USA", p:3.09}, {s:"Texas", c:"plainview", st:"CEFCO", p:3.11}, {s:"Texas", c:"tyler", st:"Sam's Club", p:3.13}, {s:"Texas", c:"pampa", st:"Murphy USA", p:3.14}, {s:"Texas", c:"sherman", st:"Sam's Club", p:3.14}, {s:"Texas", c:"brownsville", st:"76 & VP Racing Fuels", p:3.19}, {s:"Texas", c:"san-antonio", st:"Judson Corner Store", p:3.19}, {s:"Texas", c:"hereford", st:"Love's Travel Stop", p:3.19}, {s:"Texas", c:"nacogdoches", st:"Murphy Express", p:3.19}, {s:"Texas", c:"dumas", st:"Murphy USA", p:3.19}, {s:"Texas", c:"huntsville", st:"Smiley’s", p:3.19}, {s:"Texas", c:"levelland", st:"Alon", p:3.22}, {s:"Texas", c:"borger", st:"Walmart", p:3.24}, {s:"Texas", c:"mcallen", st:"H-E-B", p:3.26}, {s:"Texas", c:"gainesville", st:"Murphy USA", p:3.28}, {s:"Texas", c:"athens", st:"Brookshire's", p:3.29}, {s:"Texas", c:"vernon", st:"Murphy USA", p:3.29}, {s:"Texas", c:"jacksonville", st:"Murphy USA", p:3.29}, {s:"Texas", c:"corsicana", st:"QuikTrip", p:3.31}, {s:"Texas", c:"laredo", st:"Walmart", p:3.31}, {s:"Texas", c:"brownwood", st:"Alon", p:3.32}, {s:"Texas", c:"mineral-wells", st:"Murphy USA", p:3.32}, {s:"Texas", c:"odessa", st:"Sam's Club", p:3.32}, {s:"Texas", c:"midland", st:"Costco", p:3.33}, {s:"Texas", c:"corpus-christi", st:"Murphy USA", p:3.33}, {s:"Texas", c:"uvalde", st:"Murphy USA", p:3.33}, {s:"Texas", c:"killeen", st:"Murphy USA", p:3.35}, {s:"Texas", c:"waco", st:"Walmart", p:3.35}, {s:"Texas", c:"abilene", st:"Murphy USA", p:3.36}, {s:"Texas", c:"beaumont", st:"Sunoco & 7-Eleven", p:3.37}, {s:"Texas", c:"bay-city", st:"Diamond Food Mart", p:3.39}, {s:"Texas", c:"lufkin", st:"Murphy USA", p:3.39}, {s:"Texas", c:"rio-grande-city", st:"Murphy USA", p:3.39}, {s:"Texas", c:"raymondville", st:"Murphy USA", p:3.39}, {s:"Texas", c:"eagle-pass", st:"Murphy USA", p:3.39}, {s:"Texas", c:"palestine", st:"Spring Market", p:3.39}, {s:"Texas", c:"del-rio", st:"Murphy USA", p:3.42}, {s:"Texas", c:"el-campo", st:"Murphy USA", p:3.42}, {s:"Texas", c:"bonham", st:"Murphy USA", p:3.43}, {s:"Texas", c:"big-spring", st:"Murphy USA", p:3.43}, {s:"Texas", c:"mount-pleasant", st:"Mt. Pleasant Murphy USA", p:3.44}, {s:"Texas", c:"beeville", st:"Murphy USA", p:3.44}, {s:"Texas", c:"el-paso", st:"Costco", p:3.45}, {s:"Texas", c:"stephenville", st:"Murphy USA", p:3.45}, {s:"Texas", c:"kingsville", st:"Murphy USA", p:3.46}, {s:"Texas", c:"paris", st:"Casey's", p:3.47}, {s:"Texas", c:"alice", st:"Murphy USA", p:3.47}, {s:"Texas", c:"wichita-falls", st:"Sam's Club", p:3.47}, {s:"Texas", c:"victoria", st:"Walmart", p:3.47}, {s:"Texas", c:"marshall", st:"Spring Market", p:3.48}, {s:"Texas", c:"sulphur-springs", st:"Exxon", p:3.49}, {s:"Texas", c:"sweetwater", st:"Murphy USA", p:3.49}, {s:"Texas", c:"lamesa", st:"Phillips 66 & Stripes", p:3.49}, {s:"Texas", c:"college-station", st:"Costco", p:3.52}, {s:"Texas", c:"snyder", st:"Alon", p:3.54}, {s:"Texas", c:"brenham", st:"Murphy USA", p:3.54}, {s:"Texas", c:"san-angelo", st:"Sam's Club", p:3.54}, {s:"Texas", c:"kerrville", st:"Velocity", p:3.64}, {s:"Texas", c:"andrews", st:"Love's Travel Stop", p:3.67}, {s:"Texas", c:"fredericksburg", st:"Sunoco & Stripes", p:3.69}, {s:"Texas", c:"pecos", st:"Pilot", p:3.79},
+        {s:"Utah", c:"ogden", st:"Costco", p:3.85}, {s:"Utah", c:"provo", st:"Costco", p:3.85}, {s:"Utah", c:"logan", st:"Costco", p:3.85}, {s:"Utah", c:"salt-lake-city", st:"Costco", p:3.85}, {s:"Utah", c:"price", st:"Conoco", p:3.89}, {s:"Utah", c:"st.-george", st:"Shivwits Convenience Store", p:3.95}, {s:"Utah", c:"cedar-city", st:"Newcastle Market", p:3.99}, {s:"Utah", c:"heber", st:"Walmart", p:4.05}, {s:"Utah", c:"vernal", st:"Walmart", p:4.12},
+        {s:"Vermont", c:"burlington", st:"Costco", p:3.85}, {s:"Vermont", c:"rutland", st:"Irving", p:3.89}, {s:"Vermont", c:"barre", st:"Mobil", p:3.95}, {s:"Vermont", c:"bennington", st:"Mobil", p:3.95},
+        {s:"Virginia", c:"danville", st:"Sam's Club", p:3.43}, {s:"Virginia", c:"staunton", st:"Wawa", p:3.43}, {s:"Virginia", c:"roanoke", st:"Marathon", p:3.45}, {s:"Virginia", c:"charlottesville", st:"Costco", p:3.48}, {s:"Virginia", c:"harrisonburg", st:"Costco", p:3.49}, {s:"Virginia", c:"lynchburg", st:"Sam's Club", p:3.53}, {s:"Virginia", c:"richmond", st:"Costco", p:3.54}, {s:"Virginia", c:"winchester", st:"Murphy USA", p:3.54}, {s:"Virginia", c:"virginia-beach", st:"Dodge's Store", p:3.55}, {s:"Virginia", c:"martinsville", st:"Nani's Corner", p:3.63}, {s:"Virginia", c:"blacksburg", st:"Marathon", p:3.69},
+        {s:"Washington", c:"yakima", st:"Wheeler's Kountry Korner", p:4.28}, {s:"Washington", c:"mount-vernon", st:"Swinomish Markets at the Villa", p:4.54}, {s:"Washington", c:"spokane", st:"Chevron & 76", p:4.62}, {s:"Washington", c:"bellingham", st:"76 & Lummi Bay Market", p:4.65}, {s:"Washington", c:"seattle", st:"River Rock Tobacco", p:4.65}, {s:"Washington", c:"moses-lake", st:"Chevron", p:4.73}, {s:"Washington", c:"kennewick", st:"Max Mart Truck Stop", p:4.75}, {s:"Washington", c:"centralia", st:"Silver Creek Buck Stop", p:4.79}, {s:"Washington", c:"oak-harbor", st:"Texaco", p:4.84}, {s:"Washington", c:"ellensburg", st:"Circle K", p:4.85}, {s:"Washington", c:"olympia", st:"Come and Go", p:4.85}, {s:"Washington", c:"longview", st:"ARCO & ampm", p:4.89}, {s:"Washington", c:"bremerton", st:"Costco", p:4.89}, {s:"Washington", c:"wenatchee", st:"Costco", p:4.89}, {s:"Washington", c:"shelton", st:"KTP Express", p:4.89}, {s:"Washington", c:"walla-walla", st:"Safeway", p:4.89}, {s:"Washington", c:"pullman", st:"Safeway", p:4.89}, {s:"Washington", c:"port-angeles", st:"ARCO", p:4.99}, {s:"Washington", c:"aberdeen", st:"Q-Mart II", p:4.99},
+        {s:"Washington DC", c:"washington", st:"Costco", p:3.39},
+        {s:"West Virginia", c:"parkersburg", st:"Sam's Club", p:3.46}, {s:"West Virginia", c:"wheeling", st:"Marathon", p:3.47}, {s:"West Virginia", c:"huntington", st:"Sam's Club", p:3.52}, {s:"West Virginia", c:"weirton", st:"Sunoco", p:3.59}, {s:"West Virginia", c:"charleston", st:"Sam's Club", p:3.63}, {s:"West Virginia", c:"fairmont", st:"Exxon", p:3.69}, {s:"West Virginia", c:"point-pleasant", st:"Walmart", p:3.69}, {s:"West Virginia", c:"bluefield", st:"Sam's Club", p:3.73}, {s:"West Virginia", c:"clarksburg", st:"Exxon & Black Bear Express", p:3.79}, {s:"West Virginia", c:"morgantown", st:"Sam's Club", p:3.87}, {s:"West Virginia", c:"beckley", st:"Sheetz", p:3.99},
+        {s:"Wisconsin", c:"eau-claire", st:"Casey's", p:3.32}, {s:"Wisconsin", c:"racine", st:"Woodman's Gas and Lube", p:3.39}, {s:"Wisconsin", c:"menomonie", st:"Cenex", p:3.44}, {s:"Wisconsin", c:"fond-du-lac", st:"Love's Travel Stop", p:3.44}, {s:"Wisconsin", c:"milwaukee", st:"Costco", p:3.45}, {s:"Wisconsin", c:"madison", st:"BP", p:3.49}, {s:"Wisconsin", c:"sheboygan", st:"Kwik Trip", p:3.49}, {s:"Wisconsin", c:"la-crosse", st:"Stop N Go", p:3.49}, {s:"Wisconsin", c:"wisconsin-rapids", st:"Mobil", p:3.51}, {s:"Wisconsin", c:"wausau", st:"Amoco", p:3.54}, {s:"Wisconsin", c:"beaver-dam", st:"CITGO", p:3.55}, {s:"Wisconsin", c:"marinette", st:"Kwik Trip", p:3.55}, {s:"Wisconsin", c:"oshkosh", st:"Amoco", p:3.56}, {s:"Wisconsin", c:"stevens-point", st:"Amoco", p:3.56}, {s:"Wisconsin", c:"green-bay", st:"BP", p:3.57}, {s:"Wisconsin", c:"appleton", st:"Costco", p:3.57}, {s:"Wisconsin", c:"platteville", st:"Casey's", p:3.58}, {s:"Wisconsin", c:"whitewater", st:"BP", p:3.59}, {s:"Wisconsin", c:"merrill", st:"BP", p:3.59}, {s:"Wisconsin", c:"manitowoc", st:"Shell", p:3.59}, {s:"Wisconsin", c:"janesville", st:"Woodman's", p:3.59}, {s:"Wisconsin", c:"baraboo", st:"BP", p:3.63}, {s:"Wisconsin", c:"watertown", st:"BP", p:3.64},
+        {s:"Wyoming", c:"cheyenne", st:"Moody's Rock Stop", p:3.44}, {s:"Wyoming", c:"casper", st:"Sam's Club", p:3.45}, {s:"Wyoming", c:"laramie", st:"Sinclair", p:3.49}, {s:"Wyoming", c:"rock-springs", st:"Smith's", p:3.65}, {s:"Wyoming", c:"gillette", st:"Cenex", p:3.69}, {s:"Wyoming", c:"evanston", st:"RelaDyn", p:3.75}, {s:"Wyoming", c:"riverton", st:"Exxon", p:3.84}, {s:"Wyoming", c:"sheridan", st:"Maverik", p:3.96}, {s:"Wyoming", c:"jackson", st:"Maverik", p:4.24}
+    ];
+
+    // State dropdown setup
+    const stateSet = [...new Set(gasData.map(item => item.s))].sort();
+    const stateEl = document.getElementById('stateSelect');
+    stateSet.forEach(s => {
+        let opt = document.createElement('option');
+        opt.value = s;
+        opt.innerText = s;
+        stateEl.appendChild(opt);
+    });
+
+    function populateCities() {
+        const state = stateEl.value;
+        const cityEl = document.getElementById('citySelect');
+        cityEl.innerHTML = '<option value="">Select Home City</option>';
+        
+        const cities = gasData.filter(item => item.s === state).sort((a,b) => a.c.localeCompare(b.c));
+        cities.forEach(item => {
+            let opt = document.createElement('option');
+            opt.value = item.p;
+            opt.dataset.station = item.st;
+            opt.innerText = item.c.charAt(0).toUpperCase() + item.c.slice(1).replace(/-/g, ' ');
+            cityEl.appendChild(opt);
+        });
+    }
+
+    function toggleLocal() {
+        const isLocal = document.getElementById('localFan').checked;
+        const milesInput = document.getElementById('miles');
+        if (isLocal) {
+            milesInput.value = 30; // Standard urban round trip
+            milesInput.disabled = true;
+        } else {
+            milesInput.value = "";
+            milesInput.disabled = false;
+        }
+    }
+
+    function calculate() {
+        const gasPrice = parseFloat(document.getElementById('citySelect').value);
+        const miles = parseFloat(document.getElementById('miles').value);
+        const mpg = parseFloat(document.getElementById('mpg').value);
+        const fans = parseFloat(document.getElementById('fans').value);
+        const isLocal = document.getElementById('localFan').checked;
+
+        if (!gasPrice || !miles || !mpg || fans < 1) {
+            alert("Please complete all fields.");
+            return;
+        }
+
+        const totalCost = (miles / mpg) * gasPrice;
+        const costPerFan = totalCost / fans;
+        
+        document.getElementById('totalCost').innerText = '$' + totalCost.toFixed(2);
+        document.getElementById('perFan').innerText = '$' + costPerFan.toFixed(2);
+        document.getElementById('appliedPrice').innerText = '$' + gasPrice.toFixed(2);
+        
+        const mode = isLocal ? "Commute" : "Road Trip";
+        document.getElementById('insight').innerHTML = `<strong>VEGAS INSIDER SCOUTING REPORT:</strong> This ${mode} is a lock. Split with ${fans} fans, you're paying less than a stadium soda to get to the game!`;
+        
+        document.getElementById('results').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
