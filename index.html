@@ -9,29 +9,24 @@
             --vi-gold: #ffcc00; --vi-black: #1a1a1a; --vi-dark-grey: #2d2d2d;
             --vi-white: #ffffff; --vi-green: #00c853;
         }
-        body {
-            font-family: 'Segoe UI', sans-serif; background-color: #0d0d0d;
-            color: var(--vi-white); display: flex; justify-content: center; padding: 20px;
-        }
-        .calculator-card {
-            background-color: var(--vi-black); border: 1px solid var(--vi-dark-grey);
-            border-radius: 12px; width: 100%; max-width: 550px; padding: 30px;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
-        }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: #0d0d0d; color: var(--vi-white); display: flex; justify-content: center; padding: 20px; }
+        .calculator-card { background-color: var(--vi-black); border: 1px solid var(--vi-dark-grey); border-radius: 12px; width: 100%; max-width: 600px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .header { text-align: center; border-bottom: 2px solid var(--vi-gold); margin-bottom: 25px; padding-bottom: 15px; }
-        .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; font-weight: 900; line-height: 1.2; }
+        .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; font-weight: 900; line-height: 1.2; }
         .header h1 span { color: var(--vi-gold); }
         .input-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 8px; font-size: 11px; color: #999; text-transform: uppercase; font-weight: bold; }
         select, input { width: 100%; padding: 12px; background-color: var(--vi-dark-grey); border: 1px solid #444; color: white; border-radius: 4px; font-size: 15px; }
-        .btn-calculate { width: 100%; padding: 18px; background-color: var(--vi-gold); color: black; border: none; border-radius: 4px; font-weight: 900; font-size: 18px; cursor: pointer; text-transform: uppercase; margin-top: 10px; }
-        .results { margin-top: 25px; display: none; background: #252525; padding: 20px; border-radius: 8px; border: 1px solid var(--vi-gold); }
-        .main-stat { font-size: 36px; color: var(--vi-gold); font-weight: bold; text-align: center; margin: 10px 0; }
+        .btn-calculate { width: 100%; padding: 18px; background-color: var(--vi-gold); color: black; border: none; border-radius: 4px; font-weight: 900; font-size: 18px; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
+        .btn-calculate:hover { background-color: #e6b800; }
+        .results { margin-top: 25px; display: none; background: #252525; padding: 20px; border-radius: 8px; border: 1px solid var(--vi-gold); position: relative; }
+        .main-stat { font-size: 42px; color: var(--vi-gold); font-weight: bold; text-align: center; margin: 5px 0; }
         .summary-box { display: flex; justify-content: space-around; border-top: 1px solid #444; padding-top: 15px; margin-top: 15px; }
         .summary-item { text-align: center; }
         .summary-item div:first-child { font-size: 10px; color: #888; text-transform: uppercase; }
         .summary-item div:last-child { font-size: 18px; font-weight: bold; color: var(--vi-green); }
-        .disclaimer { font-size: 11px; color: #666; text-align: center; margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; }
+        .caveat { font-size: 11px; color: #ffcc00; text-align: center; margin-top: 10px; font-weight: bold; font-style: italic; }
+        .disclaimer { font-size: 10px; color: #555; text-align: center; margin-top: 20px; border-top: 1px solid #333; padding-top: 10px; line-height: 1.4; }
     </style>
 </head>
 <body>
@@ -42,75 +37,85 @@
     </div>
 
     <div class="input-group">
-        <label>Select Destination Stadium</label>
+        <label>Which Team / Stadium Are You Seeing?</label>
         <select id="stadiumSelect">
-            <option value="">-- Select Stadium --</option>
-            <option value="40.7505,-73.9934">Madison Square Garden (NYC)</option>
-            <option value="34.043,-118.2673">Crypto.com Arena (LA)</option>
-            <option value="41.8807,-87.6742">United Center (Chicago)</option>
-            <option value="42.3662,-71.0621">TD Garden (Boston)</option>
-            <option value="37.768,-122.3877">Chase Center (San Francisco)</option>
-            <option value="32.7905,-96.8103">American Airlines Center (Dallas)</option>
-            <option value="33.7573,-84.3963">Mercedes-Benz Stadium (Atlanta)</option>
-            <option value="33.9535,-118.339">SoFi Stadium (Inglewood/LA)</option>
-            <option value="32.7473,-97.0945">AT&T Stadium (Arlington/Dallas)</option>
-            <option value="36.0909,-115.1833">Allegiant Stadium (Las Vegas)</option>
-        </select>
+            <option value="">-- Select Destination --</option>
+            <option value="38.9077,-76.8645|Northwest Stadium">Washington Commanders (Northwest Stadium)</option>
+            <option value="29.4269,-98.4375|Frost Bank Center">San Antonio Spurs (Frost Bank Center)</option>
+            <option value="43.6332,-79.4186|BMO Field">Toronto FC (BMO Field)</option>
+            <option value="33.4459,-112.0712|Footprint Center">Phoenix Suns (Footprint Center)</option>
+            <option value="47.5952,-122.3316|Lumen Field">Seattle Seahawks (Lumen Field)</option>
+            <option value="41.8623,-87.6167|Soldier Field">Chicago Bears (Soldier Field)</option>
+            <option value="42.3400,-83.0456|Ford Field">Detroit Lions (Ford Field)</option>
+            <option value="35.8033,-78.7218|Lenovo Center">Carolina Hurricanes (Lenovo Center)</option>
+            <option value="38.8982,-77.0209|Capital One Arena">Washington Wizards/Caps (Capital One Arena)</option>
+            <option value="42.7738,-78.7870|Highmark Stadium">Buffalo Bills (Highmark Stadium)</option>
+            <option value="37.4033,-121.9694|Levi's Stadium">San Francisco 49ers (Levi's Stadium)</option>
+            <option value="34.0430,-118.2673|Crypto.com Arena">LA Lakers/Clippers/Kings (Crypto.com Arena)</option>
+            <option value="40.7505,-73.9934|Madison Square Garden">NY Knicks/Rangers (Madison Square Garden)</option>
+            <option value="44.5013,-88.0622|Lambeau Field">Green Bay Packers (Lambeau Field)</option>
+            <option value="32.7473,-97.0945|AT&T Stadium">Dallas Cowboys (AT&T Stadium)</option>
+            <option value="33.7573,-84.3963|Mercedes-Benz Stadium">Atlanta Falcons (Mercedes-Benz Stadium)</option>
+            </select>
+    </div>
+
+    <div class="input-row">
+        <div class="input-group">
+            <label>Starting State</label>
+            <select id="stateSelect" onchange="populateCities()">
+                <option value="">Select State</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Home City</label>
+            <select id="citySelect">
+                <option value="">Select City</option>
+            </select>
+        </div>
     </div>
 
     <div class="input-group">
-        <label>Your Starting State</label>
-        <select id="stateSelect" onchange="populateCities()">
-            <option value="">Select State</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label>Your Home City</label>
-        <select id="citySelect">
-            <option value="">Select Home City</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label>Vehicle Type</label>
+        <label>Your Ride</label>
         <select id="vehicleType">
             <option value="30">Sedan / Compact (30 MPG)</option>
             <option value="22" selected>SUV / Crossover (22 MPG)</option>
-            <option value="18">Minivan / Full-Size Truck (18 MPG)</option>
+            <option value="16">Pickup Truck / Full-Size Van (16 MPG)</option>
         </select>
     </div>
 
     <div class="input-group">
-        <label>Fans in Vehicle</label>
+        <label>Fans Splitting the Cost</label>
         <input type="number" id="fans" value="1" min="1">
     </div>
 
-    <button class="btn-calculate" onclick="calculate()">Calculate Trip Cost</button>
+    <button class="btn-calculate" onclick="calculate()">Analyze Trip ROI</button>
 
     <div id="results" class="results">
-        <div style="text-align: center; font-size: 12px; color: #aaa;">ESTIMATED TOTAL GAS COST</div>
+        <div style="text-align: center; font-size: 11px; color: #888; text-transform: uppercase;">Estimated Round Trip Gas Total</div>
         <div class="main-stat" id="totalCost">$0.00</div>
+        
         <div class="summary-box">
-            <div class="summary-item"><div>Split Per Fan</div><div id="perFan">$0.00</div></div>
-            <div class="summary-item"><div>Best Price</div><div id="appliedPrice">$0.00</div></div>
-            <div class="summary-item"><div>Total Miles</div><div id="totalMiles">0</div></div>
+            <div class="summary-item"><div>Per Fan</div><div id="perFan">$0.00</div></div>
+            <div class="summary-item"><div>Total Miles</div><div id="milesDisplay">0</div></div>
+            <div class="summary-item"><div>Fuel Price</div><div id="priceDisplay">$0.00</div></div>
         </div>
-        <p id="insight" style="font-size: 13px; color: #bbb; text-align: center; margin-top: 20px; line-height: 1.4; border-top: 1px solid #444; padding-top: 15px;"></p>
-        <div class="disclaimer">*Note: Mileage is calculated as the direct distance between your home city and the stadium. Gas price shown is the cheapest in your city.</div>
+        
+        <div class="caveat">Here is how much you'll pay for gas if you use the *cheapest* possible gas station.</div>
+        <p id="insight" style="font-size: 13px; color: #bbb; text-align: center; margin-top: 15px; line-height: 1.4; border-top: 1px solid #333; padding-top: 15px;"></p>
+        <div class="disclaimer">*Calculated via Haversine distance formula with a 15% road adjustment. Local fans (same city) are calculated with a flat 25-mile round trip commute.</div>
     </div>
 </div>
 
 <script>
-    // Database with coordinates for distance calculation
+    // Full Gas Data with Coordinates
     const gasData = [
-        {s:"Alabama", c:"birmingham", p:3.27, lat:33.5186, lon:-86.8104},
-        {s:"Alabama", c:"mobile", p:3.27, lat:30.6954, lon:-88.0399},
-        {s:"Arizona", c:"phoenix", p:3.44, lat:33.4484, lon:-112.074},
-        {s:"California", c:"los-angeles", p:4.79, lat:34.0522, lon:-118.2437},
-        {s:"Texas", c:"austin", p:2.89, lat:30.2672, lon:-97.7431},
-        {s:"Texas", c:"dallas", p:2.99, lat:32.7767, lon:-96.7970}
-        // Add more from your list here...
+        {s:"Alabama", c:"birmingham", p:3.27, lat:33.5186, lon:-86.8104}, {s:"Alabama", c:"mobile", p:3.27, lat:30.6954, lon:-88.0399}, {s:"Alabama", c:"auburn", p:3.31, lat:32.6099, lon:-85.4808}, {s:"Alabama", c:"huntsville", p:3.39, lat:34.7304, lon:-86.5861}, {s:"Alabama", c:"montgomery", p:3.43, lat:32.3792, lon:-86.3077}, {s:"Alabama", c:"tuscaloosa", p:3.33, lat:33.2098, lon:-87.5692},
+        {s:"Arizona", c:"phoenix", p:3.44, lat:33.4484, lon:-112.0740}, {s:"Arizona", c:"tucson", p:3.79, lat:32.2226, lon:-110.9747},
+        {s:"California", c:"san-diego", p:4.53, lat:32.7157, lon:-117.1611}, {s:"California", c:"los-angeles", p:4.79, lat:34.0522, lon:-118.2437}, {s:"California", c:"san-francisco", p:4.99, lat:37.7749, lon:-122.4194},
+        {s:"Texas", c:"austin", p:2.89, lat:30.2672, lon:-97.7431}, {s:"Texas", c:"dallas", p:2.99, lat:32.7767, lon:-96.7970}, {s:"Texas", c:"houston", p:2.99, lat:29.7604, lon:-95.3698},
+        {s:"Illinois", c:"chicago", p:3.25, lat:41.8781, lon:-87.6298},
+        {s:"New York", c:"new-york-city", p:3.59, lat:40.7128, lon:-74.0060}
+        // ... include rest of your 100+ cities here ...
     ];
 
     const stateSet = [...new Set(gasData.map(item => item.s))].sort();
@@ -123,39 +128,52 @@
         const state = stateEl.value;
         const cityEl = document.getElementById('citySelect');
         cityEl.innerHTML = '<option value="">Select Home City</option>';
-        gasData.filter(i => i.s === state).forEach(i => {
+        gasData.filter(i => i.s === state).sort((a,b)=>a.c.localeCompare(b.c)).forEach(i => {
             let opt = document.createElement('option');
-            opt.value = `${i.p}|${i.lat}|${i.lon}`;
+            opt.value = `${i.p}|${i.lat}|${i.lon}|${i.c}`;
             opt.innerText = i.c.charAt(0).toUpperCase() + i.c.slice(1).replace(/-/g, ' ');
             cityEl.appendChild(opt);
         });
     }
 
     function calculate() {
-        const stadiumVal = document.getElementById('stadiumSelect').value;
-        const cityVal = document.getElementById('citySelect').value;
+        const stadiumRaw = document.getElementById('stadiumSelect').value;
+        const cityRaw = document.getElementById('citySelect').value;
         const mpg = parseFloat(document.getElementById('vehicleType').value);
         const fans = parseFloat(document.getElementById('fans').value);
 
-        if (!stadiumVal || !cityVal) { alert("Please select a stadium and city."); return; }
+        if (!stadiumRaw || !cityRaw) { alert("Select your team and your home city first!"); return; }
 
-        const [sLat, sLon] = stadiumVal.split(',').map(Number);
-        const [price, cLat, cLon] = cityVal.split('|').map(Number);
+        const [sCoords, sName] = stadiumRaw.split('|');
+        const [sLat, sLon] = sCoords.split(',').map(Number);
+        const [price, cLat, cLon, cityName] = cityRaw.split('|');
 
-        // Haversine Formula for distance
-        const R = 3958.8; // Earth radius in miles
-        const dLat = (sLat - cLat) * Math.PI / 180;
-        const dLon = (sLon - cLon) * Math.PI / 180;
-        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(cLat * Math.PI/180) * Math.cos(sLat * Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
-        const distance = 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-        const roundTrip = distance * 2 * 1.15; // 1.15 multiplier for actual road turns vs straight line
+        // Haversine formula
+        const R = 3958.8; 
+        const dLat = (sLat - parseFloat(cLat)) * Math.PI / 180;
+        const dLon = (sLon - parseFloat(cLon)) * Math.PI / 180;
+        const a = Math.sin(dLat/2) * Math.sin(dLat/2) + 
+                  Math.cos(parseFloat(cLat) * Math.PI/180) * Math.cos(sLat * Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
+        let distance = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
 
-        const totalCost = (roundTrip / mpg) * price;
+        // Handle same city / close proximity
+        let totalMiles = distance * 2 * 1.15; // 15% road bend factor
+        let isLocal = false;
+        if (totalMiles < 25) {
+            totalMiles = 25; // Standard commute
+            isLocal = true;
+        }
+
+        const totalCost = (totalMiles / mpg) * parseFloat(price);
 
         document.getElementById('totalCost').innerText = '$' + totalCost.toFixed(2);
         document.getElementById('perFan').innerText = '$' + (totalCost/fans).toFixed(2);
-        document.getElementById('appliedPrice').innerText = '$' + price.toFixed(2);
-        document.getElementById('totalMiles').innerText = Math.round(roundTrip);
+        document.getElementById('milesDisplay').innerText = Math.round(totalMiles);
+        document.getElementById('priceDisplay').innerText = '$' + parseFloat(price).toFixed(2);
+        
+        const note = isLocal ? "Since you're a local fan, we've calculated a standard 25-mile round trip game day commute." : `Traveling to see the ${sName}? It's a calculated risk with a high payout.`;
+        document.getElementById('insight').innerHTML = `<strong>SCOUTING REPORT:</strong> ${note} At these prices, you're looking at a lock!`;
+        
         document.getElementById('results').style.display = 'block';
     }
 </script>
