@@ -12,13 +12,13 @@
         body { font-family: 'Segoe UI', Roboto, sans-serif; background-color: #0d0d0d; color: var(--vi-white); display: flex; justify-content: center; padding: 20px; }
         .calculator-card { background-color: var(--vi-black); border: 1px solid var(--vi-dark-grey); border-radius: 12px; width: 100%; max-width: 600px; padding: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.6); }
         .header { text-align: center; border-bottom: 2px solid var(--vi-gold); margin-bottom: 25px; padding-bottom: 15px; }
-        .header h1 { margin: 0; font-size: 24px; text-transform: uppercase; font-weight: 900; line-height: 1.2; }
+        .header h1 { margin: 0; font-size: 22px; text-transform: uppercase; font-weight: 900; line-height: 1.2; }
         .header h1 span { color: var(--vi-gold); }
         .input-group { margin-bottom: 18px; }
         label { display: block; margin-bottom: 8px; font-size: 11px; color: #999; text-transform: uppercase; font-weight: bold; }
         select, input { width: 100%; padding: 12px; background-color: var(--vi-dark-grey); border: 1px solid #444; color: white; border-radius: 4px; font-size: 14px; }
         .btn-calculate { width: 100%; padding: 18px; background-color: var(--vi-gold); color: black; border: none; border-radius: 4px; font-weight: 900; font-size: 18px; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: 0.2s; }
-        .btn-calculate:hover { background-color: #e6b800; transform: scale(1.01); }
+        .btn-calculate:hover { background-color: #e6b800; }
         .results { margin-top: 25px; display: none; background: #252525; padding: 20px; border-radius: 8px; border: 1px solid var(--vi-gold); }
         .main-stat { font-size: 42px; color: var(--vi-gold); font-weight: bold; text-align: center; margin: 5px 0; }
         .summary-box { display: flex; justify-content: space-around; border-top: 1px solid #444; padding-top: 15px; margin-top: 15px; }
@@ -37,7 +37,7 @@
     </div>
 
     <div class="input-group">
-        <label>Which Team / Stadium Are You Seeing?</label>
+        <label>Destination Stadium / Team</label>
         <select id="stadiumSelect">
             <option value="">-- Select Destination --</option>
             <option value="38.9077,-76.8645">Washington Commanders (Northwest Stadium)</option>
@@ -48,7 +48,7 @@
             <option value="41.8623,-87.6167">Chicago Bears (Soldier Field)</option>
             <option value="42.3400,-83.0456">Detroit Lions (Ford Field)</option>
             <option value="35.8033,-78.7218">Carolina Hurricanes (Lenovo Center)</option>
-            <option value="38.8982,-77.0209">Washington Wizards/Caps (Capital One Arena)</option>
+            <option value="38.8982,-77.0209">Wizards / Capitals (Capital One Arena)</option>
             <option value="42.7738,-78.7870">Buffalo Bills (Highmark Stadium)</option>
             <option value="37.4033,-121.9694">San Francisco 49ers (Levi’s Stadium)</option>
             <option value="39.2851,-76.6201">Baltimore Orioles (Camden Yards)</option>
@@ -71,12 +71,14 @@
             <option value="33.5350,-112.2611">Arizona Coyotes (Desert Diamond Arena)</option>
             <option value="39.9693,-83.0062">Columbus Blue Jackets (Nationwide Arena)</option>
             <option value="39.7559,-104.9942">Colorado Rockies (Coors Field)</option>
-            <option value="39.0955,-84.5161">Cincinnati Bengals (Paycor Stadium)</option>
-            <option value="39.7640,-86.1555">Indiana Pacers (Gainbridge Fieldhouse)</option>
+            <option value="44.9447,-93.1012">Minnesota Wild (Grand Casino Arena)</option>
+            <option value="39.0955,-84.5161">Cincinnati Bengals (Paul Brown Stadium)</option>
+            <option value="39.7640,-86.1555">Indiana Pacers (Bankers Life Fieldhouse)</option>
             <option value="40.8128,-74.0742">Giants / Jets (MetLife Stadium)</option>
+            <option value="34.0141,-118.2879">LA Memorial Coliseum</option>
             <option value="40.4473,-80.0067">Pittsburgh Pirates (PNC Park)</option>
-            <option value="33.4453,-112.0667">Arizona Diamondbacks (Chase Field)</option>
-            <option value="33.5276,-112.2626">Arizona Cardinals (State Farm Stadium)</option>
+            <option value="33.4453,-112.0667">AZ Diamondbacks (Chase Field)</option>
+            <option value="33.5276,-112.2626">AZ Cardinals (State Farm Stadium)</option>
             <option value="27.9759,-82.5033">TB Buccaneers (Raymond James Stadium)</option>
             <option value="45.5316,-122.6668">Portland Trail Blazers (Moda Center)</option>
             <option value="29.9511,-90.0812">New Orleans Saints (Superdome)</option>
@@ -88,33 +90,36 @@
             <option value="27.9427,-82.4518">Tampa Bay Lightning (Amalie Arena)</option>
             <option value="38.8730,-77.0074">Washington Nationals (Nationals Park)</option>
             <option value="41.8299,-87.6339">Chicago White Sox (Guaranteed Rate Field)</option>
-            <option value="40.7683,-111.9011">Utah Jazz / HC (Delta Center)</option>
+            <option value="40.7683,-111.9011">Utah Jazz (Delta Center)</option>
             <option value="35.2258,-80.8424">Carolina Panthers (Bank of America Stadium)</option>
             <option value="39.7489,-105.0084">Nuggets / Avalanche (Ball Arena)</option>
             <option value="36.1592,-86.7785">Nashville Predators (Bridgestone Arena)</option>
-            <option value="42.3411,-83.0553">Pistons / Red Wings (Little Caesars Arena)</option>
+            <option value="42.3411,-83.0553">Pistons / Wings (Little Caesars Arena)</option>
             <option value="41.8807,-87.6742">Bulls / Blackhawks (United Center)</option>
             <option value="40.4468,-80.0158">Pittsburgh Steelers (Acrisure Stadium)</option>
             <option value="43.6435,-79.3791">Raptors / Leafs (Scotiabank Arena)</option>
             <option value="45.4961,-73.5693">Montreal Canadiens (Bell Centre)</option>
             <option value="39.2881,-76.6226">Baltimore Ravens (M&T Bank Stadium)</option>
-            <option value="32.7905,-96.8103">Mavs / Stars (American Airlines Center)</option>
+            <option value="32.7905,-96.8103">Dallas Mavericks (American Airlines Center)</option>
             <option value="25.7814,-80.1870">Miami Heat (Kaseya Center)</option>
-            <option value="40.8296,-73.9262">New York Yankees (Yankee Stadium)</option>
+            <option value="40.8296,-73.9262">NY Yankees (Yankee Stadium)</option>
             <option value="42.8751,-78.8763">Buffalo Sabres (KeyBank Center)</option>
+            <option value="33.8644,-118.2611">Galaxy (Dignity Health Sports Park)</option>
             <option value="29.7573,-95.3555">Houston Astros (Minute Maid Park)</option>
+            <option value="26.1585,-80.3256">Florida Panthers (Amerant Bank Arena)</option>
             <option value="38.6268,-90.2026">St. Louis Blues (Enterprise Center)</option>
             <option value="42.3392,-83.0485">Detroit Tigers (Comerica Park)</option>
             <option value="41.4965,-81.6882">Cleveland Cavaliers (Rocket Mortgage FieldHouse)</option>
+            <option value="49.2767,-123.1084">BC Place</option>
             <option value="36.1665,-86.7713">Tennessee Titans (Nissan Stadium)</option>
             <option value="35.1382,-90.0506">Memphis Grizzlies (FedExForum)</option>
             <option value="34.0739,-118.2400">LA Dodgers (Dodger Stadium)</option>
             <option value="47.5914,-122.3323">Seattle Mariners (T-Mobile Park)</option>
-            <option value="42.0909,-71.2643">New England Patriots (Gillette Stadium)</option>
+            <option value="42.0909,-71.2643">NE Patriots (Gillette Stadium)</option>
             <option value="29.7508,-95.3621">Houston Rockets (Toyota Center)</option>
             <option value="43.6416,-79.3891">Toronto Blue Jays (Rogers Centre)</option>
             <option value="33.7573,-84.4008">Atlanta Falcons (Mercedes-Benz Stadium)</option>
-            <option value="37.7786,-122.3893">San Francisco Giants (Oracle Park)</option>
+            <option value="37.7786,-122.3893">SF Giants (Oracle Park)</option>
             <option value="44.9795,-93.2761">Timberwolves (Target Center)</option>
             <option value="39.7439,-105.0201">Denver Broncos (Empower Field)</option>
             <option value="44.9817,-93.2778">Minnesota Twins (Target Field)</option>
@@ -126,6 +131,7 @@
             <option value="33.8907,-84.4678">Atlanta Braves (Truist Park)</option>
             <option value="34.0430,-118.2673">Lakers / Kings (Crypto.com Arena)</option>
             <option value="40.7505,-73.9934">NY Knicks / Rangers (Madison Square Garden)</option>
+            <option value="45.5717,-73.5630">CF Montréal (Saputo Stadium)</option>
             <option value="42.3467,-71.0972">Boston Red Sox (Fenway Park)</option>
             <option value="39.0975,-84.5071">Cincinnati Reds (Great American Ball Park)</option>
             <option value="32.7076,-117.1570">San Diego Padres (Petco Park)</option>
@@ -141,7 +147,7 @@
     <div class="input-row">
         <div class="input-group">
             <label>Home State</label>
-            <select id="stateSelect" onchange="populateCities()">
+            <select id="stateSelect">
                 <option value="">Select State</option>
             </select>
         </div>
@@ -153,40 +159,40 @@
         </div>
     </div>
 
-    <div class="input-group">
-        <label>What are you driving?</label>
-        <select id="vehicleType">
-            <option value="30">Car / Sedan (30 MPG)</option>
-            <option value="22" selected>SUV / Crossover (22 MPG)</option>
-            <option value="16">Van / Pickup Truck (16 MPG)</option>
-        </select>
-    </div>
-
-    <div class="input-group">
-        <label>Fans Splitting the Gas Bill</label>
-        <input type="number" id="fans" value="1" min="1">
+    <div class="input-row">
+        <div class="input-group">
+            <label>Vehicle Type</label>
+            <select id="vehicleType">
+                <option value="30">Car / Sedan (30 MPG)</option>
+                <option value="22" selected>SUV / Crossover (22 MPG)</option>
+                <option value="16">Pickup / Van (16 MPG)</option>
+            </select>
+        </div>
+        <div class="input-group">
+            <label>Fans in Car</label>
+            <input type="number" id="fans" value="1" min="1">
+        </div>
     </div>
 
     <button class="btn-calculate" onclick="calculate()">Analyze Trip Cost</button>
 
     <div id="results" class="results">
-        <div style="text-align: center; font-size: 11px; color: #888; text-transform: uppercase;">Total Round Trip Fuel Cost</div>
+        <div style="text-align: center; font-size: 11px; color: #888; text-transform: uppercase;">Estimated Round Trip Fuel Cost</div>
         <div class="main-stat" id="totalCost">$0.00</div>
         
         <div class="summary-box">
-            <div class="summary-item"><div>Cost Per Fan</div><div id="perFan">$0.00</div></div>
+            <div class="summary-item"><div>Per Fan</div><div id="perFan">$0.00</div></div>
             <div class="summary-item"><div>Total Miles</div><div id="milesDisplay">0</div></div>
-            <div class="summary-item"><div>Lowest Gas</div><div id="priceDisplay">$0.00</div></div>
+            <div class="summary-item"><div>Cheapest Fuel</div><div id="priceDisplay">$0.00</div></div>
         </div>
         
         <div class="caveat">Here is how much you'll pay for gas if you use the *cheapest* possible gas station.</div>
         <p id="insight" style="font-size: 13px; color: #bbb; text-align: center; margin-top: 15px; line-height: 1.4; border-top: 1px solid #333; padding-top: 15px;"></p>
-        <div class="disclaimer">*Calculated using Haversine mapping logic with a road-curvature adjustment. Local fans are calculated at a standard 20-mile round trip game-day route. Prices live for April 2026.</div>
+        <div class="disclaimer">*Calculated using Haversine distance mapping + 15% road curvature. If you live in the stadium city, a standard 25-mile round trip is applied. Prices as of April 2026.</div>
     </div>
 </div>
 
 <script>
-    // FULL GAS DATASET FROM YOUR PROVIDED LIST
     const gasData = [
         {s:"Alabama", c:"birmingham", p:3.27, lat:33.5186, lon:-86.8104}, {s:"Alabama", c:"mobile", p:3.27, lat:30.6954, lon:-88.0399}, {s:"Alabama", c:"auburn", p:3.31, lat:32.6099, lon:-85.4808}, {s:"Alabama", c:"dothan", p:3.31, lat:31.2232, lon:-85.3905}, {s:"Alabama", c:"tuscaloosa", p:3.33, lat:33.2098, lon:-87.5692}, {s:"Alabama", c:"huntsville", p:3.39, lat:34.7304, lon:-86.5861}, {s:"Alabama", c:"daphne", p:3.39, lat:30.6035, lon:-87.9036}, {s:"Alabama", c:"valley", p:3.39, lat:32.8112, lon:-85.1763}, {s:"Alabama", c:"decatur", p:3.39, lat:34.6059, lon:-86.9833}, {s:"Alabama", c:"gadsden", p:3.41, lat:34.0143, lon:-86.0066}, {s:"Alabama", c:"talladega", p:3.42, lat:33.4359, lon:-86.1058}, {s:"Alabama", c:"montgomery", p:3.43, lat:32.3792, lon:-86.3077}, {s:"Alabama", c:"anniston", p:3.48, lat:33.6598, lon:-85.8316}, {s:"Alabama", c:"cullman", p:3.49, lat:34.1748, lon:-86.8436}, {s:"Alabama", c:"selma", p:3.55, lat:32.4074, lon:-87.0211}, {s:"Alabama", c:"florence", p:3.57, lat:34.7998, lon:-87.6773}, {s:"Alabama", c:"enterprise", p:3.58, lat:31.3152, lon:-85.8541}, {s:"Alabama", c:"alexander-city", p:3.58, lat:32.9440, lon:-85.9539}, {s:"Alabama", c:"albertville", p:3.59, lat:34.2676, lon:-86.2089}, {s:"Alabama", c:"fort-payne", p:3.59, lat:34.4368, lon:-85.7205}, {s:"Alabama", c:"eufaula", p:3.69, lat:31.8913, lon:-85.1455}, {s:"Alabama", c:"scottsboro", p:3.69, lat:34.6723, lon:-86.0341}, {s:"Alabama", c:"troy", p:3.73, lat:31.8088, lon:-85.9699},
         {s:"Alaska", c:"fairbanks", p:4.29, lat:64.8378, lon:-147.7164}, {s:"Alaska", c:"anchorage", p:4.34, lat:61.2181, lon:-149.9003}, {s:"Alaska", c:"juneau", p:4.36, lat:58.3019, lon:-134.4197},
@@ -241,24 +247,29 @@
         {s:"Wyoming", c:"cheyenne", p:3.44, lat:41.1400, lon:-104.8202}, {s:"Wyoming", c:"casper", p:3.45, lat:42.8501, lon:-106.3251}, {s:"Wyoming", c:"laramie", p:3.49, lat:41.3114, lon:-105.5911}, {s:"Wyoming", c:"rock-springs", p:3.65, lat:41.5875, lon:-109.2029}, {s:"Wyoming", c:"gillette", p:3.69, lat:44.2906, lon:-105.5019}, {s:"Wyoming", c:"evanston", p:3.75, lat:41.2683, lon:-110.9633}, {s:"Wyoming", c:"riverton", p:3.84, lat:43.0247, lon:-108.3801}, {s:"Wyoming", c:"sheridan", p:3.96, lat:44.7972, lon:-106.9562}, {s:"Wyoming", c:"jackson", p:4.24, lat:43.4799, lon:-110.7624}
     ];
 
-    // Initialize state dropdown
-    const stateSet = [...new Set(gasData.map(item => item.s))].sort();
+    // State Population Logic
     const stateEl = document.getElementById('stateSelect');
-    stateSet.forEach(s => {
+    const cityEl = document.getElementById('citySelect');
+    
+    const sortedStates = [...new Set(gasData.map(item => item.s))].sort();
+    sortedStates.forEach(s => {
         let opt = document.createElement('option'); opt.value = s; opt.innerText = s; stateEl.appendChild(opt);
     });
 
-    function populateCities() {
-        const state = stateEl.value;
-        const cityEl = document.getElementById('citySelect');
+    stateEl.addEventListener('change', function() {
+        const selectedState = this.value;
         cityEl.innerHTML = '<option value="">Select Home City</option>';
-        gasData.filter(i => i.s === state).sort((a,b)=>a.c.localeCompare(b.c)).forEach(i => {
-            let opt = document.createElement('option');
-            opt.value = `${i.p}|${i.lat}|${i.lon}`;
-            opt.innerText = i.c.charAt(0).toUpperCase() + i.c.slice(1).replace(/-/g, ' ');
-            cityEl.appendChild(opt);
-        });
-    }
+        
+        if (selectedState) {
+            const cities = gasData.filter(item => item.s === selectedState).sort((a,b) => a.c.localeCompare(b.c));
+            cities.forEach(item => {
+                let opt = document.createElement('option');
+                opt.value = `${item.p}|${item.lat}|${item.lon}`;
+                opt.innerText = item.c.charAt(0).toUpperCase() + item.c.slice(1).replace(/-/g, ' ');
+                cityEl.appendChild(opt);
+            });
+        }
+    });
 
     function calculate() {
         const sVal = document.getElementById('stadiumSelect').value;
@@ -266,20 +277,20 @@
         const mpg = parseFloat(document.getElementById('vehicleType').value);
         const fans = parseFloat(document.getElementById('fans').value);
 
-        if (!sVal || !cVal) { alert("Select your team and your home city first!"); return; }
+        if (!sVal || !cVal) { alert("Please select both a destination and your home city!"); return; }
 
         const [sLat, sLon] = sVal.split(',').map(Number);
         const [price, cLat, cLon] = cVal.split('|').map(Number);
 
-        // Distance math (Haversine)
+        // Haversine Distance
         const R = 3958.8; 
         const dLat = (sLat - cLat) * Math.PI / 180;
         const dLon = (sLon - cLon) * Math.PI / 180;
         const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(cLat * Math.PI/180) * Math.cos(sLat * Math.PI/180) * Math.sin(dLon/2) * Math.sin(dLon/2);
         let dist = R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
 
-        let totalMiles = dist * 2 * 1.15; // 15% road adjustment
-        if (totalMiles < 20) totalMiles = 20; // Traffic factor for locals
+        let totalMiles = dist * 2 * 1.15; // 15% Road curvature adjustment
+        if (totalMiles < 20) totalMiles = 25; // Local Fan Flat Fee
 
         const totalCost = (totalMiles / mpg) * price;
         const perFan = totalCost / fans;
@@ -290,7 +301,7 @@
         document.getElementById('priceDisplay').innerText = '$' + price.toFixed(2);
         
         const beerEq = Math.floor(totalCost / 14);
-        document.getElementById('insight').innerHTML = `<strong>SCOUTING REPORT:</strong> This trip costs roughly the same as <strong>${beerEq} stadium beers</strong>. With ${fans} fans in the car, you're looking at a lock for game day travel!`;
+        document.getElementById('insight').innerHTML = `<strong>VEGAS INSIDER PRO TIP:</strong> This trip's fuel is the same cost as <strong>${beerEq} stadium drinks</strong>. Split ${fans} ways, it's a lock for your game day bankroll!`;
         
         document.getElementById('results').style.display = 'block';
     }
