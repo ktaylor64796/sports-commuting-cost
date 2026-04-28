@@ -19,7 +19,7 @@
         select, input { width: 100%; padding: 12px; background-color: var(--vi-dark-grey); border: 1px solid #444; color: white; border-radius: 4px; font-size: 14px; box-sizing: border-box; }
         
         /* Search Box Styling */
-        .search-box { margin-bottom: 10px; border-color: var(--vi-gold); }
+        .search-box { margin-bottom: 10px; border: 1px solid var(--vi-gold); }
         
         .input-row { display: flex; gap: 15px; }
         .input-row .input-group { flex: 1; }
@@ -44,7 +44,7 @@
 
     <div class="input-group">
         <label>Search & Select Destination</label>
-        <input type="text" id="stadiumSearch" class="search-box" placeholder="Type team or stadium name (e.g. Ravens)...">
+        <input type="text" id="stadiumSearch" class="search-box" placeholder="Type team or stadium (e.g. Raiders, Ravens)...">
         <select id="stadiumSelect" size="5">
             <option value="38.9077,-76.8645">Washington Commanders (Northwest Stadium)</option>
             <option value="29.4269,-98.4375">San Antonio Spurs (Frost Bank Center)</option>
@@ -59,6 +59,7 @@
             <option value="37.4033,-121.9694">San Francisco 49ers (Levi’s Stadium)</option>
             <option value="39.2851,-76.6201">Baltimore Orioles (Camden Yards)</option>
             <option value="39.2881,-76.6226">Baltimore Ravens (M&T Bank Stadium)</option>
+            <option value="36.0908,-115.1840">Las Vegas Raiders (Allegiant Stadium)</option>
             <option value="33.7573,-84.3963">Atlanta Hawks (State Farm Arena)</option>
             <option value="25.7783,-80.1982">Miami Marlins (LoanDepot Park)</option>
             <option value="36.1028,-115.1782">Vegas Golden Knights (T-Mobile Arena)</option>
@@ -203,10 +204,13 @@
     const stadiumSearch = document.getElementById('stadiumSearch');
     
     // 1. SORT STADIUMS ALPHABETICALLY ON LOAD
-    const optionsArray = Array.from(stadiumSelect.options);
-    optionsArray.sort((a, b) => a.text.localeCompare(b.text));
-    stadiumSelect.innerHTML = '';
-    optionsArray.forEach(opt => stadiumSelect.add(opt));
+    function sortStadiums() {
+        const optionsArray = Array.from(stadiumSelect.options);
+        optionsArray.sort((a, b) => a.text.localeCompare(b.text));
+        stadiumSelect.innerHTML = '';
+        optionsArray.forEach(opt => stadiumSelect.add(opt));
+    }
+    sortStadiums();
 
     // 2. SEARCH/FILTER FUNCTIONALITY
     stadiumSearch.addEventListener('input', function() {
@@ -223,7 +227,7 @@
         {s:"Alaska", c:"fairbanks", p:4.29, lat:64.8378, lon:-147.7164}, {s:"Alaska", c:"anchorage", p:4.34, lat:61.2181, lon:-149.9003}, {s:"Alaska", c:"juneau", p:4.36, lat:58.3019, lon:-134.4197},
         {s:"Arizona", c:"phoenix", p:3.44, lat:33.4484, lon:-112.0740}, {s:"Arizona", c:"tucson", p:3.79, lat:32.2226, lon:-110.9747}, {s:"Arizona", c:"lake-havasu-city", p:3.83, lat:34.4839, lon:-114.3236}, {s:"Arizona", c:"sierra-vista", p:3.99, lat:31.5545, lon:-110.3037}, {s:"Arizona", c:"prescott", p:3.99, lat:34.5400, lon:-112.4685}, {s:"Arizona", c:"show-low", p:3.99, lat:34.2542, lon:-110.0298}, {s:"Arizona", c:"flagstaff", p:3.99, lat:35.1983, lon:-111.6513}, {s:"Arizona", c:"yuma", p:4.09, lat:32.6927, lon:-114.6277}, {s:"Arizona", c:"nogales", p:4.09, lat:31.3404, lon:-110.9343}, {s:"Arizona", c:"payson", p:4.15, lat:34.2309, lon:-111.3251}, {s:"Arizona", c:"safford", p:4.29, lat:32.8340, lon:-109.7076},
         {s:"Arkansas", c:"fayetteville", p:3.17, lat:36.0627, lon:-94.1574}, {s:"Arkansas", c:"fort-smith", p:3.19, lat:35.3859, lon:-94.3985}, {s:"Arkansas", c:"searcy", p:3.21, lat:35.2506, lon:-91.7363}, {s:"Arkansas", c:"jonesboro", p:3.27, lat:35.8423, lon:-90.7043}, {s:"Arkansas", c:"blytheville", p:3.28, lat:35.9273, lon:-89.9190}, {s:"Arkansas", c:"russellville", p:3.28, lat:35.2784, lon:-93.1338}, {s:"Arkansas", c:"hot-springs", p:3.29, lat:34.5037, lon:-93.0552}, {s:"Arkansas", c:"pine-bluff", p:3.29, lat:34.2284, lon:-92.0032}, {s:"Arkansas", c:"forrest-city", p:3.29, lat:35.0081, lon:-90.7898}, {s:"Arkansas", c:"little-rock", p:3.29, lat:34.7465, lon:-92.2896}, {s:"Arkansas", c:"harrison", p:3.39, lat:36.2298, lon:-93.1144}, {s:"Arkansas", c:"mountain-home", p:3.42, lat:36.3353, lon:-92.3838}, {s:"Arkansas", c:"paragould", p:3.45, lat:36.0581, lon:-90.4876}, {s:"Arkansas", c:"hope", p:3.49, lat:33.6671, lon:-93.5916}, {s:"Arkansas", c:"arkadelphia", p:3.59, lat:34.1209, lon:-93.0538}, {s:"Arkansas", c:"camden", p:3.59, lat:33.5846, lon:-92.8296}, {s:"Arkansas", c:"batesville", p:3.64, lat:35.7698, lon:-91.6410}, {s:"Arkansas", c:"el-dorado", p:3.67, lat:33.2140, lon:-92.6657}, {s:"Arkansas", c:"magnolia", p:3.69, lat:33.2671, lon:-93.2393}, {s:"Arkansas", c:"helena", p:3.73, lat:34.5293, lon:-90.5870},
-        {s:"California", c:"san-diego", p:4.53, lat:32.7157, lon:-117.1611}, {s:"California", c:"hanford", p:4.75, lat:36.3275, lon:-119.6457}, {s:"California", c:"los-angeles", p:4.79, lat:34.0522, lon:-118.2437}, {s:"California", c:"yuba-city", p:4.79, lat:39.1404, lon:-121.6169}, {s:"California", c:"fresno", p:4.79, lat:36.7378, lon:-119.7871}, {s:"California", c:"chico", p:4.79, lat:39.7285, lon:-121.8375}, {s:"California", c:"riverside", p:4.87, lat:33.9533, lon:-117.3962}, {s:"California", c:"el-centro", p:4.89, lat:32.7920, lon:-115.5631}, {s:"California", c:"sacramento", p:4.89, lat:38.5816, lon:-121.4944}, {s:"California", c:"modesto", p:4.95, lat:37.6391, lon:-120.9969}, {s:"California", c:"stockton", p:4.98, lat:37.9577, lon:-121.2908}, {s:"California", c:"san-francisco", p:4.99, lat:37.7749, lon:-122.4194}, {s:"California", c:"redding", p:4.99, lat:40.5865, lon:-122.3917}, {s:"California", c:"san-jose", p:4.99, lat:37.3382, lon:-121.8863}, {s:"California", c:"merced", p:4.99, lat:37.3022, lon:-120.4830}, {s:"California", c:"madera", p:4.99, lat:36.9613, lon:-120.0607}, {s:"California", c:"crescent-city", p:4.99, lat:41.7559, lon:-124.2026}, {s:"California", c:"red-bluff", p:4.99, lat:40.1785, lon:-122.2358}, {s:"California", c:"ukiah", p:5.09, lat:39.1502, lon:-123.2078}, {s:"California", c:"napa", p:5.09, lat:38.2975, lon:-122.2869}, {s:"California", c:"visalia", p:5.09, lat:36.3302, lon:-119.2921}, {s:"California", c:"santa-maria", p:5.15, lat:34.9530, lon:-120.4357}, {s:"California", c:"salinas", p:5.15, lat:36.6777, lon:-121.6555}, {s:"California", c:"truckee", p:5.19, lat:39.3280, lon:-120.1833}, {s:"California", c:"clearlake", p:5.19, lat:38.9582, lon:-122.6264}, {s:"California", c:"oxnard", p:5.23, lat:34.1975, lon:-119.1771}, {s:"California", c:"vallejo", p:5.23, lat:38.1041, lon:-122.2566}, {s:"California", c:"san-luis-obispo", p:5.27, lat:35.2828, lon:-120.6596}, {s:"California", c:"santa-cruz", p:5.29, lat:36.9741, lon:-122.0308}, {s:"California", c:"santa-rosa", p:5.37, lat:38.4404, lon:-122.7141}, {s:"California", c:"eureka", p:5.54, lat:40.8021, lon:-124.1637}, {s:"California", c:"susanville", p:5.64, lat:40.4163, lon:-120.6530},
+        {s:"California", c:"san-diego", p:4.53, lat:32.7157, lon:-117.1611}, {s:"California", c:"hanford", p:4.75, lat:36.3275, lon:-119.6457}, {s:"California", c:"los-angeles", p:4.79, lat:34.0522, lon:-118.2437}, {s:"California", c:"yuba-city", p:4.79, lat:39.1404, lon:-121.6169}, {s:"California", c:"fresno", p:4.79, lat:36.7378, lon:-119.7871}, {s:"California", c:"chico", p:3.39, lat:39.7285, lon:-121.8375}, {s:"California", c:"riverside", p:4.87, lat:33.9533, lon:-117.3962}, {s:"California", c:"el-centro", p:4.89, lat:32.7920, lon:-115.5631}, {s:"California", c:"sacramento", p:4.89, lat:38.5816, lon:-121.4944}, {s:"California", c:"modesto", p:4.95, lat:37.6391, lon:-120.9969}, {s:"California", c:"stockton", p:4.98, lat:37.9577, lon:-121.2908}, {s:"California", c:"san-francisco", p:4.99, lat:37.7749, lon:-122.4194}, {s:"California", c:"redding", p:4.99, lat:40.5865, lon:-122.3917}, {s:"California", c:"san-jose", p:4.99, lat:37.3382, lon:-121.8863}, {s:"California", c:"merced", p:4.99, lat:37.3022, lon:-120.4830}, {s:"California", c:"madera", p:4.99, lat:36.9613, lon:-120.0607}, {s:"California", c:"crescent-city", p:4.99, lat:41.7559, lon:-124.2026}, {s:"California", c:"red-bluff", p:4.99, lat:40.1785, lon:-122.2358}, {s:"California", c:"ukiah", p:5.09, lat:39.1502, lon:-123.2078}, {s:"California", c:"napa", p:5.09, lat:38.2975, lon:-122.2869}, {s:"California", c:"visalia", p:5.09, lat:36.3302, lon:-119.2921}, {s:"California", c:"santa-maria", p:5.15, lat:34.9530, lon:-120.4357}, {s:"California", c:"salinas", p:5.15, lat:36.6777, lon:-121.6555}, {s:"California", c:"truckee", p:5.19, lat:39.3280, lon:-120.1833}, {s:"California", c:"clearlake", p:5.19, lat:38.9582, lon:-122.6264}, {s:"California", c:"oxnard", p:5.23, lat:34.1975, lon:-119.1771}, {s:"California", c:"vallejo", p:5.23, lat:38.1041, lon:-122.2566}, {s:"California", c:"san-luis-obispo", p:5.27, lat:35.2828, lon:-120.6596}, {s:"California", c:"santa-cruz", p:5.29, lat:36.9741, lon:-122.0308}, {s:"California", c:"santa-rosa", p:5.37, lat:38.4404, lon:-122.7141}, {s:"California", c:"eureka", p:5.54, lat:40.8021, lon:-124.1637}, {s:"California", c:"susanville", p:5.64, lat:40.4163, lon:-120.6530},
         {s:"Colorado", c:"denver", p:3.29, lat:39.7392, lon:-104.9903}, {s:"Colorado", c:"colorado-springs", p:3.35, lat:38.8339, lon:-104.8214}, {s:"Colorado", c:"boulder", p:3.38, lat:40.0150, lon:-105.2705}, {s:"Colorado", c:"greeley", p:3.42, lat:40.4233, lon:-104.7086}, {s:"Colorado", c:"sterling", p:3.49, lat:40.6255, lon:-103.2077}, {s:"Colorado", c:"fort-morgan", p:3.55, lat:40.2505, lon:-103.8000}, {s:"Colorado", c:"pueblo", p:3.55, lat:38.2544, lon:-104.6091}, {s:"Colorado", c:"fort-collins", p:3.58, lat:40.5853, lon:-105.0844}, {s:"Colorado", c:"cañon-city", p:3.68, lat:38.4419, lon:-105.2425}, {s:"Colorado", c:"grand-junction", p:3.85, lat:39.0639, lon:-108.5506}, {s:"Colorado", c:"durango", p:3.88, lat:37.2753, lon:-107.8801}, {s:"Colorado", c:"edwards", p:3.99, lat:39.6453, lon:-106.5917}, {s:"Colorado", c:"montrose", p:4.14, lat:38.4783, lon:-107.8762},
         {s:"Connecticut", c:"bridgeport", p:3.47, lat:41.1792, lon:-73.1894}, {s:"Connecticut", c:"new-haven", p:3.59, lat:41.3083, lon:-72.9279}, {s:"Connecticut", c:"hartford", p:3.59, lat:41.7637, lon:-72.6851}, {s:"Connecticut", c:"norwich", p:3.70, lat:41.5243, lon:-72.0759}, {s:"Connecticut", c:"torrington", p:3.77, lat:41.8007, lon:-73.1212},
         {s:"Delaware", c:"dover", p:3.60, lat:39.1582, lon:-75.5244},
